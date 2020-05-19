@@ -17,4 +17,12 @@ public class Person {
         this.telefonNr = telefonNr;
     }
 
+    @Override
+    public String toString()
+    {
+        return this.vorname+" "+this.nachname + " "+ this.guthaben+ "€";
+    }
+
+
+
 }

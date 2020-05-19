@@ -36,7 +36,7 @@ public class detailFragment extends Fragment {
 
     private void initializeViews(View view) {
         txt1 = view.findViewById(R.id.textViewName);
-        txt2 = view.findViewById(R.id.editTextguthaben);
+        txt2 = view.findViewById(R.id.textViewGuthaben);
         spinner = view.findViewById(R.id.spinnergetraenke);
     }
 
@@ -50,8 +50,10 @@ public class detailFragment extends Fragment {
 
         List<Person> personen = new ArrayList<>();
 
+       personen.addAll(MainActivity.personen);
 
-
+        txt1.setText(personen.get(pos).vorname+" "+personen.get(pos).nachname);
+        txt2.setText(String.valueOf(personen.get(pos).guthaben));
 
 
 

@@ -25,8 +25,6 @@ import java.util.ArrayList;
 public class masterFragment extends Fragment {
 
     private ListView listView;
-    static ArrayList<String> items = new ArrayList<>();
-    static ArrayList<Person> personen = new ArrayList<>();
 
     private OnSelectionChangedListener listener;
 
@@ -57,13 +55,21 @@ public class masterFragment extends Fragment {
 
         listView = view.findViewById(R.id.listview);
 
+            MainActivity.personen.add(new Person("Günther","Jodelhuber",45,"",3423432));
+
+        for (int i = 0; i < MainActivity.personen.size(); i++) {
+
+            MainActivity.items.add(MainActivity.personen.get(i).toString());
+
+
+        }
 
 
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String item = items.get(position);
+                String item = MainActivity.items.get(position);
                 listener.onSelectionChanged(position, item);
             }
         });
@@ -78,7 +84,7 @@ public class masterFragment extends Fragment {
                 new ArrayAdapter<>(
                         getActivity(),
                         android.R.layout.simple_list_item_1,
-                        items
+                        MainActivity.items
                 );
         listView.setAdapter(adapter);
     }
