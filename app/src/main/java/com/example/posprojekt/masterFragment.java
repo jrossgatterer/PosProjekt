@@ -24,7 +24,7 @@ import java.util.ArrayList;
 
 public class masterFragment extends Fragment {
 
-    private ListView listView;
+    static ListView listView;
 
     private OnSelectionChangedListener listener;
 
@@ -55,12 +55,11 @@ public class masterFragment extends Fragment {
 
         listView = view.findViewById(R.id.listview);
 
-        MainActivity.personen.add(new Person("Günther","Jodelhuber",45,"",3423432));
+
 
         for (int i = 0; i < MainActivity.personen.size(); i++) {
 
             MainActivity.items.add(MainActivity.personen.get(i).toString());
-
 
         }
 
@@ -87,6 +86,7 @@ public class masterFragment extends Fragment {
                         MainActivity.items
                 );
         listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
 

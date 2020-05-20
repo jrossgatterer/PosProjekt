@@ -3,14 +3,20 @@ package com.example.posprojekt;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener  {
@@ -26,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static String name;//login
     static String password;//login
 
-
+    Adapter adapter;
 
 
     @Override
@@ -35,6 +41,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         setContentView(R.layout.activity_main);
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
+        adapter = new Adapter(MainActivity.personen,MainActivity.this,R.layout.startlayoutperson);
+        masterFragment.listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -72,6 +81,50 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         int id = item.getItemId();
 
+
+
+        switch (id)
+        {
+            case R.id.menu_newPerson:
+                AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                alert.setTitle("Neue Person");
+                final View view = getLayoutInflater().inflate(R.layout.newperson,null);
+                alert.setView(view);
+                alert.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText vorname = view.findViewById(R.id.vorname);
+                        EditText nachname = view.findViewById(R.id.nachname);
+                        EditText guthanen = view.findViewById(R.id.number);
+                        EditText email = view.findViewById(R.id.email);
+                        EditText telnr = view.findViewById(R.id.number);
+
+                        try {
+                            String vorn = vorname.getText().toString();
+                            String nach = nachname.toString();
+                            double guthab = Double.parseDouble(guthanen.getText().toString());
+                            String emai = email.toString();
+                            int teln = Integer.parseInt(telnr.getText().toString());
+                            personen.add(new Person(vorn,nach,guthab,emai,teln));
+                        }
+                        catch(Exception io)
+                        {
+                            io.printStackTrace();
+                        }
+                    }}
+                    );
+                alert.setNegativeButton("Zurück",null);
+                alert.show();
+                adapter.notifyDataSetChanged();
+
+
+
+                break;
+
+
+
+
+        }
 
         return true;
     }
