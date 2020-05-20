@@ -55,7 +55,7 @@ public class masterFragment extends Fragment {
 
         listView = view.findViewById(R.id.listview);
 
-            MainActivity.personen.add(new Person("Günther","Jodelhuber",45,"",3423432));
+        MainActivity.personen.add(new Person("Günther","Jodelhuber",45,"",3423432));
 
         for (int i = 0; i < MainActivity.personen.size(); i++) {
 
@@ -75,9 +75,9 @@ public class masterFragment extends Fragment {
         });
 
 
-}
+    }
 
-        @Override
+    @Override
     public void onStart() {
         super.onStart();
         final ArrayAdapter<String> adapter =
@@ -93,5 +93,4 @@ public class masterFragment extends Fragment {
 
 
 
-    }
-
+}

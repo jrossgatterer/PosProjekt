@@ -6,18 +6,12 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<fragment
-android:id="@+id/fragmentmaster"
-android:name="com.example.posprojekt.masterFragment"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_weight="1" />
+    <fragment
+        android:id="@+id/fragmentmaster"
+        android:name="com.example.posprojekt.masterFragment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1" />
 
 
-<fragment
-android:id="@+id/fragmentdetail"
-android:name="com.example.posprojekt.detailFragment"
-android:layout_width="wrap_content"
-android:layout_height="wrap_content"
-android:layout_weight="1" />
-    </LinearLayout>
+</LinearLayout>

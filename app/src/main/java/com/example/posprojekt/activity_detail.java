@@ -29,8 +29,8 @@ public class activity_detail extends AppCompatActivity {
         Intent intent = getIntent();
         if(intent == null) return;
         detailFragment detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
-        int pos = intent.getIntExtra("pos", -1);//Position
-        String item = intent.getStringExtra("item");//Abteilung
+        int pos = intent.getIntExtra("pos", -1);
+        String item = intent.getStringExtra("item");
         detailFragment.showInformation(pos,item);
 
     }

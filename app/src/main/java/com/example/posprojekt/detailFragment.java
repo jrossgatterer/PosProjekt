@@ -23,7 +23,6 @@ public class detailFragment extends Fragment {
     private TextView txt1;
     private TextView txt2;
     private Spinner spinner;
-    private ListView listView;
 
 
     @Override
@@ -48,24 +47,8 @@ public class detailFragment extends Fragment {
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void showInformation(int pos, String item) {
 
-        List<Person> personen = new ArrayList<>();
-
-       personen.addAll(MainActivity.personen);
-
-        txt1.setText(personen.get(pos).vorname+" "+personen.get(pos).nachname);
-        txt2.setText(String.valueOf(personen.get(pos).guthaben));
-
-
-
-        final ArrayAdapter<Person> adapter =
-                new ArrayAdapter<>(
-                        getActivity(),
-                        android.R.layout.simple_list_item_1,
-                        personen
-                );
-        listView.setAdapter(adapter);
-
-
+        txt1.setText(MainActivity.personen.get(pos).vorname+" "+MainActivity.personen.get(pos).nachname);
+        txt2.setText(String.valueOf(MainActivity.personen.get(pos).guthaben));
     }
 
 
