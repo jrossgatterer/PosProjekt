@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,6 +25,10 @@ public class detailFragment extends Fragment {
     private TextView txt2;
     private Spinner spinner;
 
+    Button getraenkhinzufuegen;
+    Button zurueck;
+    Button loeschen;
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
@@ -37,6 +42,9 @@ public class detailFragment extends Fragment {
         txt1 = view.findViewById(R.id.textViewName);
         txt2 = view.findViewById(R.id.textViewGuthaben);
         spinner = view.findViewById(R.id.spinnergetraenke);
+        getraenkhinzufuegen = view.findViewById(R.id.getraenkhinzufuegen);
+        zurueck = view.findViewById(R.id.cancel);
+        loeschen = view.findViewById(R.id.loeschen);
     }
 
     @Override

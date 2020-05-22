@@ -24,9 +24,12 @@ import java.util.ArrayList;
 
 public class masterFragment extends Fragment {
 
-    static ListView listView;
+    static ArrayList<Person> personen = new ArrayList<>();
+    static ArrayList<String> items = new ArrayList<>();
 
-    private OnSelectionChangedListener listener;
+    static ListView listView;
+    static ArrayAdapter<String> adapter;
+    static OnSelectionChangedListener listener;
 
     @Override
     public void onAttach(Context context) {
@@ -51,17 +54,12 @@ public class masterFragment extends Fragment {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    private void initializeViews(View view) {
+    public static void initializeViews(View view) {
 
         listView = view.findViewById(R.id.listview);
 
+        items.addAll(MainActivity.items);
 
-
-        for (int i = 0; i < MainActivity.personen.size(); i++) {
-
-            MainActivity.items.add(MainActivity.personen.get(i).toString());
-
-        }
 
 
 
@@ -79,11 +77,11 @@ public class masterFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        final ArrayAdapter<String> adapter =
+       adapter =
                 new ArrayAdapter<>(
                         getActivity(),
                         android.R.layout.simple_list_item_1,
-                        MainActivity.items
+                        items
                 );
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

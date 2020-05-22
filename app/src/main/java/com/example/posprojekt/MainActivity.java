@@ -32,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static String name;//login
     static String password;//login
 
-    Adapter adapter;
 
 
     @Override
@@ -41,9 +40,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         setContentView(R.layout.activity_main);
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
-        adapter = new Adapter(MainActivity.personen,MainActivity.this,R.layout.startlayoutperson);
-        masterFragment.listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -80,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         //Rechts oben 3 Punkte
 
         int id = item.getItemId();
-
+        final int sizebefore = personen.size();
 
 
         switch (id)
@@ -99,30 +95,36 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         EditText email = view.findViewById(R.id.email);
                         EditText telnr = view.findViewById(R.id.number);
 
+
+
                         try {
                             String vorn = vorname.getText().toString();
                             String nach = nachname.toString();
                             double guthab = Double.parseDouble(guthanen.getText().toString());
                             String emai = email.toString();
-                            int teln = Integer.parseInt(telnr.getText().toString());
-                            personen.add(new Person(vorn,nach,guthab,emai,teln));
+                            long teln = Long.parseLong(telnr.getText().toString());
+                            Person x = new Person(vorn,nach,guthab,emai,teln);
+                            items.add(x.toString());
+                            personen.add(x);
+
+
+
                         }
                         catch(Exception io)
                         {
                             io.printStackTrace();
+                            Log.d("MainActivity","Failed to parse"+""+io);
                         }
+
+
                     }}
                     );
                 alert.setNegativeButton("Zurück",null);
                 alert.show();
-                adapter.notifyDataSetChanged();
 
 
 
                 break;
-
-
-
 
         }
 

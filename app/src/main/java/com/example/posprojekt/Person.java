@@ -6,10 +6,10 @@ public class Person {
     String nachname;
     double guthaben;
     String emailAdresse;
-    int telefonNr;
+    long telefonNr;
 
 
-    public Person(String vorname, String nachname, double guthaben, String emailAdresse, int telefonNr) {
+    public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr) {
         this.vorname = vorname;
         this.nachname = nachname;
         this.guthaben = guthaben;
