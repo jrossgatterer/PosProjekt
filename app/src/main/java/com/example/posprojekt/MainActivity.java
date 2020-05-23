@@ -94,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     public void onClick(DialogInterface dialog, int which) {
                         EditText vorname = view.findViewById(R.id.vorname);
                         EditText nachname = view.findViewById(R.id.nachname);
-                        EditText guthanen = view.findViewById(R.id.number);
+                        EditText guthanen = view.findViewById(R.id.guthaben);
                         EditText email = view.findViewById(R.id.email);
                         EditText telnr = view.findViewById(R.id.number);
 
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             Person x = new Person(vorn,nach,guthab,emai,teln);
                             items.add(x.toString());
                             personen.add(x);
-                            Toast.makeText(view.getContext(),x.toString(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(view.getContext(),"Klicken sie bitte auf um ⟳"+nach+" anzuzeigen",Toast.LENGTH_SHORT).show();
                             masterFragment.adapter.notifyDataSetChanged();
                             masterFragment.listView.setAdapter(masterFragment.adapter);
                             masterFragment.adapter.notifyDataSetChanged();

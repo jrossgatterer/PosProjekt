@@ -26,6 +26,20 @@
             android:text="TextView"
             android:textSize="18sp" />
 
+        <TextView
+            android:id="@+id/textViewEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/textViewTelefonnr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="TextView"
+            android:textSize="18sp" />
+
         <Spinner
             android:id="@+id/spinnergetraenke"
             android:layout_width="match_parent"
@@ -41,6 +55,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Getränk hinzufügen" />
+
+            <Button
+                android:id="@+id/guthabenerweitern"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Guthaben hinzufügen" />
 
             <Button
                 android:id="@+id/loeschen"
