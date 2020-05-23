@@ -58,8 +58,18 @@ public class masterFragment extends Fragment {
 
         listView = view.findViewById(R.id.listview);
 
-        items.addAll(MainActivity.items);
+        for (int i = 0; i < MainActivity.items.size(); i++) {
 
+            if(items.contains(MainActivity.items.get(i)))
+            {
+
+            }
+            else
+            {
+                items.add(MainActivity.items.get(i));
+            }
+
+        }
 
 
 

@@ -1,5 +1,6 @@
 package com.example.posprojekt;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -19,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class detailFragment extends Fragment {
+public class detailFragment extends Fragment implements View.OnClickListener {
 
     private TextView txt1;
     private TextView txt2;
@@ -35,7 +36,11 @@ public class detailFragment extends Fragment {
     {
         View view = inflater.inflate(R.layout.fragment_detail,container,false);
         initializeViews(view);
+        getraenkhinzufuegen.setOnClickListener(this);
+        zurueck.setOnClickListener(this);
+        loeschen.setOnClickListener(this);
         return view;
+
     }
 
     private void initializeViews(View view) {
@@ -45,6 +50,8 @@ public class detailFragment extends Fragment {
         getraenkhinzufuegen = view.findViewById(R.id.getraenkhinzufuegen);
         zurueck = view.findViewById(R.id.cancel);
         loeschen = view.findViewById(R.id.loeschen);
+
+
     }
 
     @Override
@@ -57,7 +64,36 @@ public class detailFragment extends Fragment {
 
         txt1.setText(MainActivity.personen.get(pos).vorname+" "+MainActivity.personen.get(pos).nachname);
         txt2.setText(String.valueOf(MainActivity.personen.get(pos).guthaben));
+
     }
 
 
+    @Override
+    public void onClick(View v) {
+
+        int id = v.getId();
+
+        switch (id)
+        {
+            case R.id.getraenkhinzufuegen:
+
+                break;
+
+            case R.id.cancel:
+
+                Intent intent = new Intent(v.getContext(),MainActivity.class);
+                startActivity(intent);
+                break;
+
+            case R.id.loeschen:
+
+                //MainActivity.personen.remove();
+
+                Intent intent3 = new Intent(v.getContext(),MainActivity.class);
+                startActivity(intent3);
+
+                break;
+        }
+
+    }
 }

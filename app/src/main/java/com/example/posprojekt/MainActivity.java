@@ -13,13 +13,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener  {
+public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener {
 
 
     static ArrayList<Person> personen = new ArrayList<>();
@@ -32,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static String name;//login
     static String password;//login
 
-
+    Button aktualisieren;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         setContentView(R.layout.activity_main);
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
+        aktualisieren = findViewById(R.id.aktualisieren);
+        aktualisieren.setOnClickListener(this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -99,15 +102,17 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                         try {
                             String vorn = vorname.getText().toString();
-                            String nach = nachname.toString();
+                            String nach = nachname.getText().toString();
                             double guthab = Double.parseDouble(guthanen.getText().toString());
-                            String emai = email.toString();
+                            String emai = email.getText().toString();
                             long teln = Long.parseLong(telnr.getText().toString());
                             Person x = new Person(vorn,nach,guthab,emai,teln);
                             items.add(x.toString());
                             personen.add(x);
-
-
+                            Toast.makeText(view.getContext(),x.toString(),Toast.LENGTH_SHORT).show();
+                            masterFragment.adapter.notifyDataSetChanged();
+                            masterFragment.listView.setAdapter(masterFragment.adapter);
+                            masterFragment.adapter.notifyDataSetChanged();
 
                         }
                         catch(Exception io)
@@ -131,4 +136,23 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         return true;
     }
 
+    @Override
+    public void onClick(View v) {
+
+        int id = v.getId();
+
+        switch (id)
+        {
+            case R.id.aktualisieren:
+
+                Intent intent = new Intent(this, MainActivity.class);
+                startActivity(intent);
+                Toast.makeText(this,"Aktualisieren",Toast.LENGTH_SHORT).show();
+
+                break;
+
+
+        }
+
+    }
 }
