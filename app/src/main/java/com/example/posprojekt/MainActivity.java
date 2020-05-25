@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
                     }}
-                    );
+                );
                 alert.setNegativeButton("Zurück",null);
                 alert.show();
 
@@ -134,6 +134,29 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 startActivity(intent);
                 Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
 
+                break;
+
+            case R.id.menu_newGetraenk:
+                AlertDialog.Builder alert5 = new AlertDialog.Builder(this);
+                alert5.setTitle("Neue Person");
+                final View view5 = getLayoutInflater().inflate(R.layout.getraenke_hinzufuegen,null);
+                alert5.setView(view5);
+                alert5.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        EditText getraenkename = view5.findViewById(R.id.getraenke_name);
+                        EditText getraenkepreis = view5.findViewById(R.id.getraenke_preis);
+                        String name = getraenkename.getText().toString();
+                        Double preis = Double.parseDouble(getraenkepreis.getText().toString());
+
+
+                        MainActivity.getraenke.add(new Getraenk(name, preis));
+
+
+                    }}
+                );
+                alert5.setNegativeButton("Zurück",null);
+                alert5.show();
                 break;
 
         }
