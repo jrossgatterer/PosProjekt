@@ -8,16 +8,9 @@
 
     <!-- TODO: Update blank fragment layout -->
 
-    <Button
-        android:id="@+id/aktualisieren"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="⟳"
-        android:textSize="36sp" />
-
     <ListView
         android:id="@+id/listview"
         android:layout_width="match_parent"
-        android:layout_height="626dp"></ListView>
+        android:layout_height="864dp"></ListView>
 
 </LinearLayout>

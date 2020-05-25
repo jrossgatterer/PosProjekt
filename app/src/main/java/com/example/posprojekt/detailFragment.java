@@ -93,7 +93,7 @@ public class detailFragment extends Fragment implements View.OnClickListener {
         switch (id)
         {
             case R.id.getraenkhinzufuegen:
-
+                    //Spinner auswerten, Getränk hinzufügen und Geld abziehen
                 break;
 
             case R.id.cancel:
@@ -105,6 +105,7 @@ public class detailFragment extends Fragment implements View.OnClickListener {
             case R.id.loeschen:
 
                 MainActivity.personen.remove(position);
+                MainActivity.items.remove(position);
 
                 Intent intent3 = new Intent(v.getContext(),MainActivity.class);
                 startActivity(intent3);
@@ -120,14 +121,21 @@ public class detailFragment extends Fragment implements View.OnClickListener {
                 alert.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                       EditText guthaben = view.findViewById(R.id.guthabenerweitern);
+                       EditText guthaben = view.findViewById(R.id.guthabenerweiternBetrag);
 
                        try {
                            double guthabenerweitern = Double.parseDouble(guthaben.getText().toString());
 
+                           double gut = MainActivity.personen.get(position).guthaben + guthabenerweitern;
 
+                          //MainActivity.personen.get(position).guthaben = gut;
+                          MainActivity.personen.set(position,new Person(MainActivity.personen.get(position).vorname,MainActivity.personen.get(position).nachname,gut,MainActivity.personen.get(position).emailAdresse,MainActivity.personen.get(position).telefonNr));
+                          MainActivity.items.remove(position);
+                          MainActivity.items.add(MainActivity.personen.get(position).toString());
 
+                          txt2.setText(gut + " €");
 
+                           Toast.makeText(v.getContext(), "Neues Guthaben: "+gut,Toast.LENGTH_SHORT).show();
                        }
                        catch (Exception ex)
                        {

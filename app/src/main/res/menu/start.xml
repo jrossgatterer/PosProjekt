@@ -18,4 +18,8 @@
         android:id="@+id/menu_login"
         android:title="Login" />
 
+    <item
+        android:id="@+id/menu_aktualisieren"
+        android:title="Aktualisieren" />
+
 </menu>

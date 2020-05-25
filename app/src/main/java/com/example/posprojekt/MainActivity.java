@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener {
 
@@ -33,7 +34,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static String name;//login
     static String password;//login
 
-    Button aktualisieren;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,8 +41,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         setContentView(R.layout.activity_main);
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
-        aktualisieren = findViewById(R.id.aktualisieren);
-        aktualisieren.setOnClickListener(this);
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -109,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             Person x = new Person(vorn,nach,guthab,emai,teln);
                             items.add(x.toString());
                             personen.add(x);
-                            Toast.makeText(view.getContext(),"Klicken sie bitte auf um ⟳"+nach+" anzuzeigen",Toast.LENGTH_SHORT).show();
                             masterFragment.adapter.notifyDataSetChanged();
                             masterFragment.listView.setAdapter(masterFragment.adapter);
                             masterFragment.adapter.notifyDataSetChanged();
@@ -130,6 +128,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
                 break;
+            case R.id.menu_aktualisieren:
+                Intent intent = new Intent(this, MainActivity.class);
+
+                startActivity(intent);
+                Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
+
+                break;
 
         }
 
@@ -141,18 +146,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         int id = v.getId();
 
-        switch (id)
-        {
-            case R.id.aktualisieren:
 
-                Intent intent = new Intent(this, MainActivity.class);
-                startActivity(intent);
-                Toast.makeText(this,"Aktualisieren",Toast.LENGTH_SHORT).show();
-
-                break;
-
-
-        }
 
     }
 }

@@ -58,20 +58,6 @@ public class masterFragment extends Fragment {
 
         listView = view.findViewById(R.id.listview);
 
-        for (int i = 0; i < MainActivity.items.size(); i++) {
-
-            if(items.contains(MainActivity.items.get(i)))
-            {
-
-            }
-            else
-            {
-                items.add(MainActivity.items.get(i));
-            }
-
-        }
-
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -91,7 +77,7 @@ public class masterFragment extends Fragment {
                 new ArrayAdapter<>(
                         getActivity(),
                         android.R.layout.simple_list_item_1,
-                        items
+                        MainActivity.items
                 );
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();

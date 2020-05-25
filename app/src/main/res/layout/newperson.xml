@@ -7,12 +7,14 @@
         android:id="@+id/vorname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
         android:hint="Vorname" />
 
     <EditText
         android:id="@+id/nachname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
         android:hint="Nachname" />
 
     <EditText
@@ -20,6 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:fontFamily="sans-serif-black"
         android:hint="Guthaben"
         android:inputType="number" />
 
@@ -27,6 +30,7 @@
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-black"
         android:hint="Email" />
 
     <EditText
@@ -34,6 +38,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
+        android:fontFamily="sans-serif-black"
         android:hint="Telefonnummer"
         android:inputType="number" />
 </LinearLayout>

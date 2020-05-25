@@ -24,5 +24,11 @@ public class Person {
     }
 
 
+    public  String vorundnachname()
+    {
+        return this.vorname+""+this.nachname;
+    }
+
+
 
 }
