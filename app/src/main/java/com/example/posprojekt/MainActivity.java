@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             case R.id.menu_newGetraenk:
                 AlertDialog.Builder alert5 = new AlertDialog.Builder(this);
-                alert5.setTitle("Neue Person");
+                alert5.setTitle("Neues Getränk");
                 final View view5 = getLayoutInflater().inflate(R.layout.getraenke_hinzufuegen,null);
                 alert5.setView(view5);
                 alert5.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
@@ -147,10 +147,41 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         EditText getraenkename = view5.findViewById(R.id.getraenke_name);
                         EditText getraenkepreis = view5.findViewById(R.id.getraenke_preis);
                         String name = getraenkename.getText().toString();
-                        Double preis = Double.parseDouble(getraenkepreis.getText().toString());
+                        try {
+
+                            String getrPreis = getraenkepreis.getText().toString();
+                            String[] arr = getrPreis.split("");
+
+                            for (int i = 0; i < arr.length; i++) {
+
+                                if(arr[i].equals(","))
+                                {
+                                    arr[i] = ".";
+                                }
+
+                            }
 
 
-                        MainActivity.getraenke.add(new Getraenk(name, preis));
+                            getrPreis = "";
+
+                            for (int i = 0; i < arr.length; i++) {
+
+                                getrPreis+=arr[i];
+
+                            }
+
+
+
+                            Double preis = Double.parseDouble(getrPreis);
+                            MainActivity.getraenke.add(new Getraenk(name, preis));
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.makeText(view5.getContext(),"Hinzufügen Fehlgeschlagen",Toast.LENGTH_SHORT).show();
+                        }
+
+
+
 
 
                     }}

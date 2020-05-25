@@ -3,12 +3,14 @@ package com.example.posprojekt;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class detailFragment extends Fragment implements View.OnClickListener {
+public class detailFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private TextView txt1; //Name
     private TextView txt2; //Guthaben
@@ -39,6 +41,7 @@ public class detailFragment extends Fragment implements View.OnClickListener {
     Button guthabenhinzufuegen;
 
     int position;
+    Getraenk getraenk;
 
 
     @Override
@@ -64,6 +67,8 @@ public class detailFragment extends Fragment implements View.OnClickListener {
         txt3 = view.findViewById(R.id.textViewEmail);
         txt4 = view.findViewById(R.id.textViewTelefonnr);
         guthabenhinzufuegen = view.findViewById(R.id.guthabenerweitern);
+        spinner.setAdapter(new ArrayAdapter<Getraenk>(view.getContext(), android.R.layout.simple_list_item_1, MainActivity.getraenke));
+
     }
 
 
@@ -81,6 +86,12 @@ public class detailFragment extends Fragment implements View.OnClickListener {
         txt3.setText(MainActivity.personen.get(pos).emailAdresse);
         txt4.setText(String.valueOf(MainActivity.personen.get(pos).telefonNr));
         this.position = pos;
+        spinner.setOnItemSelectedListener(this);
+
+        if(MainActivity.personen.get(pos).guthaben < 5)
+        {
+            txt2.setBackgroundColor(Color.RED);
+        }
 
     }
 
@@ -94,6 +105,24 @@ public class detailFragment extends Fragment implements View.OnClickListener {
         {
             case R.id.getraenkhinzufuegen:
                     //Spinner auswerten, Getränk hinzufügen und Geld abziehen
+
+                if(MainActivity.personen.get(position).guthaben > 0) {
+                    double preis = getraenk.preis;
+                    String name = getraenk.name;
+                    txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
+                    MainActivity.personen.get(position).guthaben -= preis;
+                    MainActivity.items.remove(position);
+                    MainActivity.items.add(MainActivity.personen.get(position).toString());
+
+                    if (MainActivity.personen.get(position).guthaben <= 5) {
+                        Toast.makeText(v.getContext(), "Achtung! Es sind noch " + MainActivity.personen.get(position).guthaben + "€ verfügbar.", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else
+                {
+                    Toast.makeText(v.getContext(), "Achtung! Kein Guthaben", Toast.LENGTH_SHORT).show();
+                }
+
                 break;
 
             case R.id.cancel:
@@ -106,6 +135,7 @@ public class detailFragment extends Fragment implements View.OnClickListener {
 
                 MainActivity.personen.remove(position);
                 MainActivity.items.remove(position);
+
 
                 Intent intent3 = new Intent(v.getContext(),MainActivity.class);
                 startActivity(intent3);
@@ -152,6 +182,18 @@ public class detailFragment extends Fragment implements View.OnClickListener {
 
                 break;
         }
+
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+
+        getraenk = MainActivity.getraenke.get(position);
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> parent) {
 
     }
 }

@@ -18,6 +18,6 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Preis"
-        android:inputType="number" />
+        android:inputType="textPersonName" />
 
 </LinearLayout>

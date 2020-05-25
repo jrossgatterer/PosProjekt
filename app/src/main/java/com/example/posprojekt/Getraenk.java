@@ -10,4 +10,11 @@ public class Getraenk {
         this.name = name;
         this.preis = preis;
     }
+
+
+    @Override
+    public String toString()
+    {
+        return this.name+" "+this.preis + "€";
+    }
 }
