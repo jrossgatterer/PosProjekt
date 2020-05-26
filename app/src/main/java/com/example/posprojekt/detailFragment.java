@@ -110,9 +110,18 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                     double preis = getraenk.preis;
                     String name = getraenk.name;
                     txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
+                    String vorNach = MainActivity.personen.get(position).vorundnachname();
                     MainActivity.personen.get(position).guthaben -= preis;
                     MainActivity.items.remove(position);
-                    MainActivity.items.add(MainActivity.personen.get(position).toString());
+
+                    Person person = MainActivity.personen.get(position);
+
+                    MainActivity.personen.remove(position);
+                    MainActivity.personen.add(person);
+                    MainActivity.items.add(person.toString());
+
+                    position = MainActivity.personen.indexOf(person);
+
 
                     if (MainActivity.personen.get(position).guthaben <= 5) {
                         Toast.makeText(v.getContext(), "Achtung! Es sind noch " + MainActivity.personen.get(position).guthaben + "€ verfügbar.", Toast.LENGTH_SHORT).show();
@@ -121,6 +130,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                 else
                 {
                     Toast.makeText(v.getContext(), "Achtung! Kein Guthaben", Toast.LENGTH_SHORT).show();
+                    txt2.setBackgroundColor(Color.RED);
                 }
 
                 break;
@@ -158,10 +168,15 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                            double gut = MainActivity.personen.get(position).guthaben + guthabenerweitern;
 
-                          //MainActivity.personen.get(position).guthaben = gut;
-                          MainActivity.personen.set(position,new Person(MainActivity.personen.get(position).vorname,MainActivity.personen.get(position).nachname,gut,MainActivity.personen.get(position).emailAdresse,MainActivity.personen.get(position).telefonNr));
-                          MainActivity.items.remove(position);
-                          MainActivity.items.add(MainActivity.personen.get(position).toString());
+
+                           Person person = MainActivity.personen.get(position);
+                           person.guthaben = gut;
+                           MainActivity.items.remove(position);
+                           MainActivity.personen.remove(position);
+                           MainActivity.personen.add(person);
+                           MainActivity.items.add(person.toString());
+
+                           position = MainActivity.personen.indexOf(person);
 
                           txt2.setText(gut + " €");
 
