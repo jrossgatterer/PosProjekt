@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "249303538498",
+    "firebase_url": "https://posprojekt-50bb7.firebaseio.com",
+    "project_id": "posprojekt-50bb7",
+    "storage_bucket": "posprojekt-50bb7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:249303538498:android:200db881b313e8f02846db",
+        "android_client_info": {
+          "package_name": "com.example.posprojekt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "249303538498-oh0ugbg37ijpuv8dvorbj2tioep3hc8t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvZF9k-N7NflWfrin2ZCjZJ_r55MgA1no"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "249303538498-oh0ugbg37ijpuv8dvorbj2tioep3hc8t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
