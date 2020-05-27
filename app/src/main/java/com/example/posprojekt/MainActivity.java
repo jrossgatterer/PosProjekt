@@ -38,8 +38,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static boolean admin;
 
     static List<User> users = new ArrayList<>();//Personen zum Anmelden
+    static List<Gruppe> gruppen = new ArrayList<>();
 
-
+    static String gruppenpasswort;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,8 +90,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         switch (id)
         {
-            case R.id.menu_newPerson:
 
+
+            case R.id.menu_newPerson:
+                if(admin == true) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("Neue Person");
                 final View view = getLayoutInflater().inflate(R.layout.newperson,null);
@@ -104,7 +107,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                 EditText email = view.findViewById(R.id.email);
                                 EditText telnr = view.findViewById(R.id.number);
 
-                                if (admin == true) {
+
 
                                     try {
                                         String vorn = vorname.getText().toString();
@@ -126,15 +129,16 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
                                 }
-                                else
-                                {
-                                    Toast.makeText(view.getContext(), "Sie haben keine Berechtigungen um eine Person hinzuzufügen", Toast.LENGTH_SHORT).show();
-                                }
-                            }
+
+
                         }
                 );
                 alert.setNegativeButton("Zurück",null);
                 alert.show();
+        }else
+        {
+            Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
+        }
 
 
 
@@ -149,6 +153,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 break;
 
             case R.id.menu_newGetraenk:
+                if(admin == true) {
                 AlertDialog.Builder alert5 = new AlertDialog.Builder(this);
                 alert5.setTitle("Neues Getränk");
                 final View view5 = getLayoutInflater().inflate(R.layout.getraenke_hinzufuegen,null);
@@ -163,9 +168,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
 
-                        if(admin == true) {
-                            try {
-
+                        try {
                                 String getrPreis = getraenkepreis.getText().toString();
                                 String[] arr = getrPreis.split("");
 
@@ -192,11 +195,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             } catch (Exception ex) {
                                 Toast.makeText(view5.getContext(), "Hinzufügen Fehlgeschlagen", Toast.LENGTH_SHORT).show();
                             }
-                        }
-                        else
-                        {
-                            Toast.makeText(view5.getContext(), "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
-                        }
 
 
 
@@ -206,7 +204,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 );
                 alert5.setNegativeButton("Zurück",null);
                 alert5.show();
+
+                }else
+                    {
+                        Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
+                    }
                 break;
+
 
 
             case R.id.menu_login:
@@ -222,6 +226,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         EditText passw = view6.findViewById(R.id.login_passwort);
                         EditText grupp = view6.findViewById(R.id.login_gruppe);
 
+
                         try {
 
                             MainActivity.email = user.getText().toString();
@@ -230,10 +235,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                             User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,false);
 
+
                             if(users.contains(us))
                             {
                                 //Login in Firebase
-
 
 
                             }
@@ -308,36 +313,46 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 alert8.setTitle("Admin");
                 final View view8 = getLayoutInflater().inflate(R.layout.loginandregistrierenadmin,null);
                 alert8.setView(view8);
-                alert8.setPositiveButton("Admin",new DialogInterface.OnClickListener() {
+                alert8.setPositiveButton("Login als Admin",new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText user = view8.findViewById(R.id.admin_email);
                         EditText passw = view8.findViewById(R.id.admin_passwort);
                         EditText grupp = view8.findViewById(R.id.admin_Gruppe);
                         Switch sw = view8.findViewById(R.id.admin_switch);
-
+                        EditText grupppas = view8.findViewById(R.id.admin_grupppasswort);
                         try {
 
                             MainActivity.email = user.getText().toString();
                             MainActivity.passwort = user.getText().toString();
                             MainActivity.gruppe = user.getText().toString();
                             MainActivity.admin = sw.isChecked();
-                            Toast.makeText(view8.getContext(), sw.isChecked()+"",Toast.LENGTH_SHORT).show();
+                            MainActivity.gruppenpasswort = grupppas.getText().toString();
 
 
                             User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,admin);
 
-                            if(users.contains(us) && !users.contains(us.gruppe))
+
+                            Gruppe gruppe1 = new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort);
+
+                            if(gruppen.contains(gruppe1))
                             {
-                                //Login
-
-
-
+                                Toast.makeText(view8.getContext(), "Name oder Passwort nicht korrekt",Toast.LENGTH_SHORT).show();
                             }
                             else
                             {
-                                users.add(new User(email, passwort, gruppe,admin));
+                                if(users.contains(us) && !users.contains(us.gruppe))
+                                {
+                                    //Login
+
+                                }
+                                else
+                                {
+                                    users.add(new User(email, passwort, gruppe,admin));
+                                }
                             }
+
+
 
                         }
                         catch(Exception ex)
@@ -350,6 +365,54 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 );
                 alert8.setNegativeButton("Zurück",null);
                 alert8.show();
+                break;
+
+
+            case R.id.menu_gruppehinzufügen:
+
+                if(admin == true) {
+                AlertDialog.Builder alert9 = new AlertDialog.Builder(this);
+                alert9.setTitle("Gruppe hinzufügen");
+                final View view9 = getLayoutInflater().inflate(R.layout.gruppehinzufegenadmin,null);
+                alert9.setView(view9);
+                alert9.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        EditText gruppenna = view9.findViewById(R.id.gruppehinz_name);
+                        EditText gruppenpass = view9.findViewById(R.id.gruppehinz_passwort);
+
+                        try {
+
+                            String group = gruppenna.getText().toString();
+
+
+                            if(MainActivity.gruppen.contains(group))
+                            {
+                                Toast.makeText(view9.getContext(), "Gruppe existiert bereits",Toast.LENGTH_SHORT).show();
+
+                            }
+                            else {
+                                MainActivity.gruppe = gruppenna.getText().toString();
+                                MainActivity.gruppenpasswort = gruppenpass.getText().toString();
+                                gruppen.add(new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort));
+                            }
+
+
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+
+                    }}
+                );
+                alert9.setNegativeButton("Zurück",null);
+                alert9.show();
+                }else
+                {
+                    Toast.makeText(this, "Sie haben keine Berechtigungen um eine Gruppe hinzuzufügen", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
         }

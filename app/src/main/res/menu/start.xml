@@ -23,6 +23,10 @@
         android:title="Login als Admin" />
 
     <item
+        android:id="@+id/menu_gruppehinzufügen"
+        android:title="Neue Gruppe erstellen" />
+
+    <item
         android:id="@+id/menu_aktualisieren"
         android:title="Aktualisieren" />
 
