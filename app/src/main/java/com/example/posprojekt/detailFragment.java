@@ -106,32 +106,38 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
             case R.id.getraenkhinzufuegen:
                     //Spinner auswerten, Getränk hinzufügen und Geld abziehen
 
-                if(MainActivity.personen.get(position).guthaben > 0) {
-                    double preis = getraenk.preis;
-                    String name = getraenk.name;
-                    txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
-                    String vorNach = MainActivity.personen.get(position).vorundnachname();
-                    MainActivity.personen.get(position).guthaben -= preis;
-                    MainActivity.items.remove(position);
-
-                    Person person = MainActivity.personen.get(position);
-
-                    MainActivity.personen.remove(position);
-                    MainActivity.personen.add(person);
-                    MainActivity.items.add(person.toString());
-
-                    position = MainActivity.personen.indexOf(person);
 
 
-                    if (MainActivity.personen.get(position).guthaben <= 5) {
-                        Toast.makeText(v.getContext(), "Achtung! Es sind noch " + MainActivity.personen.get(position).guthaben + "€ verfügbar.", Toast.LENGTH_SHORT).show();
+                if (MainActivity.admin == true) {
+
+                    if (MainActivity.personen.get(position).guthaben > 0) {
+                        double preis = getraenk.preis;
+                        String name = getraenk.name;
+                        txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
+                        String vorNach = MainActivity.personen.get(position).vorundnachname();
+                        MainActivity.personen.get(position).guthaben -= preis;
+                        MainActivity.items.remove(position);
+
+                        Person person = MainActivity.personen.get(position);
+
+                        MainActivity.personen.remove(position);
+                        MainActivity.personen.add(person);
+                        MainActivity.items.add(person.toString());
+
+                        position = MainActivity.personen.indexOf(person);
+
+
+                        if (MainActivity.personen.get(position).guthaben <= 5) {
+                            Toast.makeText(v.getContext(), "Achtung! Es sind noch " + MainActivity.personen.get(position).guthaben + "€ verfügbar.", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        Toast.makeText(v.getContext(), "Achtung! Kein Guthaben", Toast.LENGTH_SHORT).show();
+                        txt2.setBackgroundColor(Color.RED);
                     }
-                }
-                else
-                {
-                    Toast.makeText(v.getContext(), "Achtung! Kein Guthaben", Toast.LENGTH_SHORT).show();
-                    txt2.setBackgroundColor(Color.RED);
-                }
+                }else
+                    {
+                        Toast.makeText(v.getContext(), "Sie haben keine Berechtigung um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
+                    }
 
                 break;
 
@@ -142,19 +148,27 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                 break;
 
             case R.id.loeschen:
+                if (MainActivity.admin == true) {
 
-                MainActivity.personen.remove(position);
-                MainActivity.items.remove(position);
+                    MainActivity.personen.remove(position);
+                    MainActivity.items.remove(position);
 
 
-                Intent intent3 = new Intent(v.getContext(),MainActivity.class);
-                startActivity(intent3);
+                    Intent intent3 = new Intent(v.getContext(), MainActivity.class);
+                    startActivity(intent3);
+                }else
+                {
+                    Toast.makeText(v.getContext(), "Sie haben keine Berechtigung um eine Person zu löschen", Toast.LENGTH_SHORT).show();
+                }
 
                 break;
 
             case R.id.guthabenerweitern:
 
-                AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
+                if (MainActivity.admin == true) {
+
+
+                    AlertDialog.Builder alert = new AlertDialog.Builder(v.getContext());
                 alert.setTitle("Guthaben erweitern");
                 final View view = getLayoutInflater().inflate(R.layout.guthabenerweitern,null);
                 alert.setView(view);
@@ -194,6 +208,10 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                 );
                 alert.setNegativeButton("Zurück",null);
                 alert.show();
+                }else
+                {
+                    Toast.makeText(v.getContext(), "Sie haben keine Berechtigung um eine Person zu löschen", Toast.LENGTH_SHORT).show();
+                }
 
                 break;
         }

@@ -19,7 +19,13 @@
         android:title="Login" />
 
     <item
+        android:id="@+id/menu_admin"
+        android:title="Login als Admin" />
+
+    <item
         android:id="@+id/menu_aktualisieren"
         android:title="Aktualisieren" />
+
+
 
 </menu>
