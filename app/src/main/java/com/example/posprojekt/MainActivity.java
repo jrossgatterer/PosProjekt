@@ -1,5 +1,6 @@
 package com.example.posprojekt;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,6 +18,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
+
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -48,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         setContentView(R.layout.activity_main);
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
-
+        myRef = FirebaseDatabase.getInstance().getReference().child("User");
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -147,10 +154,18 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 Intent intent = new Intent(this, MainActivity.class);
 
 
+
                 startActivity(intent);
+
+                writeUser();
+                //loadUser();
                 Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
 
                 break;
+
+
+
+
 
             case R.id.menu_newGetraenk:
                 if(admin == true) {
@@ -230,8 +245,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         try {
 
                             MainActivity.email = user.getText().toString();
-                            MainActivity.passwort = user.getText().toString();
-                            MainActivity.gruppe = user.getText().toString();
+                            MainActivity.passwort = passw.getText().toString();
+                            MainActivity.gruppe = grupp.getText().toString();
 
                             User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,false);
 
@@ -278,8 +293,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         try {
 
                             MainActivity.email = user.getText().toString();
-                            MainActivity.passwort = user.getText().toString();
-                            MainActivity.gruppe = user.getText().toString();
+                            MainActivity.passwort = passw.getText().toString();
+                            MainActivity.gruppe = grupp.getText().toString();
 
                             User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,false);
 
@@ -324,8 +339,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         try {
 
                             MainActivity.email = user.getText().toString();
-                            MainActivity.passwort = user.getText().toString();
-                            MainActivity.gruppe = user.getText().toString();
+                            MainActivity.passwort = passw.getText().toString();
+                            MainActivity.gruppe = grupp.getText().toString();
                             MainActivity.admin = sw.isChecked();
                             MainActivity.gruppenpasswort = grupppas.getText().toString();
 
@@ -344,10 +359,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                 if(users.contains(us) && !users.contains(us.gruppe))
                                 {
                                     //Login
+                                    //
+                                    
 
                                 }
                                 else
                                 {
+                                    Toast.makeText(view8.getContext(),"Neuer Admin",Toast.LENGTH_SHORT).show();
                                     users.add(new User(email, passwort, gruppe,admin));
                                 }
                             }
@@ -428,4 +446,70 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
     }
+
+
+
+
+
+    DatabaseReference myRef;
+
+
+
+    public void writeUser()
+    {
+
+        User user = new User("","","",false);
+
+        user.setEmail(email);
+        user.setPasswort(passwort);
+        user.setGruppe(gruppe);
+        user.setAdmin(admin);
+
+            myRef.push().setValue(user);
+        }
+
+
+
+
+
+    static String value;
+    static User userload = new User("","","",false);
+    public void loadUser()
+    {
+
+       myRef = FirebaseDatabase.getInstance().getReference().child("User").child("");
+       myRef.addValueEventListener(new ValueEventListener() {
+           @Override
+           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+               String email = dataSnapshot.child("email").getValue().toString();
+               String passwort = dataSnapshot.child("passwort").getValue().toString();
+               String gruppe = dataSnapshot.child("gruppe").getValue().toString();
+               String admin = dataSnapshot.child("admin").getValue().toString();
+
+               userload.setEmail(email);
+               userload.setAdmin(Boolean.getBoolean(admin));
+               userload.setPasswort(passwort);
+               userload.setGruppe(gruppe);
+
+               users.add(userload);
+
+           }
+
+           @Override
+           public void onCancelled(@NonNull DatabaseError databaseError) {
+
+           }
+       });
+
+    }
+
+
+
+    public void writePersonen()
+    {
+
+    }
+
+
+
 }

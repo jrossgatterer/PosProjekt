@@ -30,5 +30,43 @@ public class Person {
     }
 
 
+    public String getVorname() {
+        return vorname;
+    }
 
+    public void setVorname(String vorname) {
+        this.vorname = vorname;
+    }
+
+    public String getNachname() {
+        return nachname;
+    }
+
+    public void setNachname(String nachname) {
+        this.nachname = nachname;
+    }
+
+    public double getGuthaben() {
+        return guthaben;
+    }
+
+    public void setGuthaben(double guthaben) {
+        this.guthaben = guthaben;
+    }
+
+    public String getEmailAdresse() {
+        return emailAdresse;
+    }
+
+    public void setEmailAdresse(String emailAdresse) {
+        this.emailAdresse = emailAdresse;
+    }
+
+    public long getTelefonNr() {
+        return telefonNr;
+    }
+
+    public void setTelefonNr(long telefonNr) {
+        this.telefonNr = telefonNr;
+    }
 }
