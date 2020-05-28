@@ -38,13 +38,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static ArrayList<String> items = new ArrayList<>();
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
     static Person person = new Person();
-
-    public interface DataStatus{
-        void DataIsLoaded(List<Person> personData, List<String> keys);
-        void DataIsInserted();
-        void DataIsUpdated();
-        void DataIsDeleted();
-    }
+    long zaehler = 0;
 
     private detailFragment detailFragment;
     private boolean showdetail;
@@ -63,31 +57,25 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
         myRef = FirebaseDatabase.getInstance().getReference().child("User");
-
-        loadPersonen(new DataStatus() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void DataIsLoaded(List<Person> personData, List<String> keys) {
-
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    zaehler = (dataSnapshot.getChildrenCount());
+                }
             }
 
             @Override
-            public void DataIsInserted() {
-
-            }
-
-            @Override
-            public void DataIsUpdated() {
-
-            }
-
-            @Override
-            public void DataIsDeleted() {
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -243,8 +231,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
                     }
                 break;
-
-
 
             case R.id.menu_login:
                 //login
@@ -468,7 +454,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         user.setPasswort(passwort);
         user.setGruppe(gruppe);
         user.setAdmin(admin);
-            myRef.push().setValue(user);
+            myRef.child(String.valueOf(zaehler+1)).setValue(user);
         }
 
     static String value;
@@ -508,7 +494,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         myReference = FirebaseDatabase.getInstance().getReference().child("Personen");
         myReference.push().setValue(person);
     }
-    public void loadPersonen(final DataStatus dataStatus)
+    public void loadPersonen()
     {
         DatabaseReference myReference;
         myReference = FirebaseDatabase.getInstance().getReference().child("Personen");
@@ -522,8 +508,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     keys.add(keyNode.getKey());
                     Person person = keyNode.getValue(Person.class);
                     personen.add(person);
+                    MainActivity.items.add(person.toString());
                 }
-                dataStatus.DataIsLoaded(personen, keys);
             }
 
             @Override
@@ -531,6 +517,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             }
         });
+        Toast.makeText(this, personen.get(0).toString(),Toast.LENGTH_LONG).show();
     }
     public void writeGruppen()
     {
