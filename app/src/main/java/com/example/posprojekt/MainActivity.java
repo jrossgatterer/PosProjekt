@@ -1,6 +1,7 @@
 package com.example.posprojekt;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +20,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,6 +38,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static ArrayList<String> items = new ArrayList<>();
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
     static Person person = new Person();
+
+    public interface DataStatus{
+        void DataIsLoaded(List<Person> personData, List<String> keys);
+        void DataIsInserted();
+        void DataIsUpdated();
+        void DataIsDeleted();
+    }
 
     private detailFragment detailFragment;
     private boolean showdetail;
@@ -57,6 +66,28 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
         myRef = FirebaseDatabase.getInstance().getReference().child("User");
+
+        loadPersonen(new DataStatus() {
+            @Override
+            public void DataIsLoaded(List<Person> personData, List<String> keys) {
+
+            }
+
+            @Override
+            public void DataIsInserted() {
+
+            }
+
+            @Override
+            public void DataIsUpdated() {
+
+            }
+
+            @Override
+            public void DataIsDeleted() {
+
+            }
+        });
     }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -65,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         if(showdetail) detailFragment.showInformation(pos,item);
         else callDetailActivity(pos,item);
     }
-
 
     private void callDetailActivity(int pos, String item) {
         Intent intent = new Intent(this, activity_detail.class);
@@ -88,12 +118,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         int id = item.getItemId();
         final int sizebefore = personen.size();
-
-
         switch (id)
         {
-
-
             case R.id.menu_newPerson:
                 if(admin == true) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -141,9 +167,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         {
             Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
         }
-
-
-
                 break;
             case R.id.menu_aktualisieren:
                 Intent intent = new Intent(this, MainActivity.class);
@@ -410,7 +433,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                 gruppen.add(new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort));
                             }
 
-
                         }
                         catch (Exception ex)
                         {
@@ -451,6 +473,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     static String value;
     static User userload = new User("","","",false);
+
     public void loadUser()
     {
        myRef = FirebaseDatabase.getInstance().getReference().child("User").child("");
@@ -478,15 +501,36 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
        });
 
     }
+
     public void writePersonen()
     {
         DatabaseReference myReference;
         myReference = FirebaseDatabase.getInstance().getReference().child("Personen");
         myReference.push().setValue(person);
     }
-    public void loadPersonen()
+    public void loadPersonen(final DataStatus dataStatus)
     {
+        DatabaseReference myReference;
+        myReference = FirebaseDatabase.getInstance().getReference().child("Personen");
+        myReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                personen.clear();
+                List<String> keys = new ArrayList<>();
+                for(DataSnapshot keyNode: dataSnapshot.getChildren())
+                {
+                    keys.add(keyNode.getKey());
+                    Person person = keyNode.getValue(Person.class);
+                    personen.add(person);
+                }
+                dataStatus.DataIsLoaded(personen, keys);
+            }
 
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
     public void writeGruppen()
     {
