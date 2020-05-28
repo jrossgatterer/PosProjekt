@@ -35,6 +35,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static ArrayList<Person> personen = new ArrayList<>();//Personen der Liste
     static ArrayList<String> items = new ArrayList<>();
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
+    static Person person = new Person();
 
     private detailFragment detailFragment;
     private boolean showdetail;
@@ -74,17 +75,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         startActivity(intent);
     }
 
-
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.start, menu);
         return super.onCreateOptionsMenu(menu);
     }
-
-
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item)
@@ -114,8 +109,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                 EditText email = view.findViewById(R.id.email);
                                 EditText telnr = view.findViewById(R.id.number);
 
-
-
                                     try {
                                         String vorn = vorname.getText().toString();
                                         String nach = nachname.getText().toString();
@@ -125,15 +118,17 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         Person x = new Person(vorn, nach, guthab, emai, teln);
                                         items.add(x.toString());
                                         personen.add(x);
+                                        MainActivity.person = x;
                                         masterFragment.adapter.notifyDataSetChanged();
                                         masterFragment.listView.setAdapter(masterFragment.adapter);
                                         masterFragment.adapter.notifyDataSetChanged();
+
+                                        writePersonen();
 
                                     } catch (Exception io) {
                                         io.printStackTrace();
                                         Log.d("MainActivity", "Failed to parse" + "" + io);
                                     }
-
 
                                 }
 
@@ -157,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                 startActivity(intent);
 
-                writeUser();
+
                 //loadUser();
                 Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
 
@@ -302,11 +297,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             {
                                 //Login
                                 Toast.makeText(view7.getContext(), MainActivity.email+"sie sind bereits Registriert",Toast.LENGTH_SHORT).show();
-
-
                             }
                             else
                             {
+                                Toast.makeText(view7.getContext(),"Registriert",Toast.LENGTH_SHORT).show();
                                 users.add(new User(email, passwort, gruppe,false));
                             }
 
@@ -316,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             Toast.makeText(view7.getContext(), "Registrieren Fehlgeschlagen",Toast.LENGTH_SHORT).show();
                         }
 
-
+                        writeUser();
                     }}
                 );
                 alert7.setNegativeButton("Zurück",null);
@@ -377,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         {
                             Toast.makeText(view8.getContext(), "Fehlgeschlagen",Toast.LENGTH_SHORT).show();
                         }
-
+                    writeUser();
 
                     }}
                 );
@@ -442,41 +436,23 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     public void onClick(View v) {
 
         int id = v.getId();
-
-
-
     }
-
-
-
-
-
     DatabaseReference myRef;
-
-
 
     public void writeUser()
     {
-
         User user = new User("","","",false);
-
         user.setEmail(email);
         user.setPasswort(passwort);
         user.setGruppe(gruppe);
         user.setAdmin(admin);
-
             myRef.push().setValue(user);
         }
-
-
-
-
 
     static String value;
     static User userload = new User("","","",false);
     public void loadUser()
     {
-
        myRef = FirebaseDatabase.getInstance().getReference().child("User").child("");
        myRef.addValueEventListener(new ValueEventListener() {
            @Override
@@ -502,14 +478,23 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
        });
 
     }
-
-
-
     public void writePersonen()
+    {
+        DatabaseReference myReference;
+        myReference = FirebaseDatabase.getInstance().getReference().child("Personen");
+        myReference.push().setValue(person);
+    }
+    public void loadPersonen()
     {
 
     }
+    public void writeGruppen()
+    {
 
+    }
+    public void loadGruppen()
+    {
 
+    }
 
 }

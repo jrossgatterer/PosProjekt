@@ -8,6 +8,9 @@ public class Person {
     String emailAdresse;
     long telefonNr;
 
+    public Person() {
+
+    }
 
     public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr) {
         this.vorname = vorname;
