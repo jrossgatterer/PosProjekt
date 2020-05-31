@@ -39,9 +39,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
     static Person person = new Person();
     long zaehler = 0;
-
+    long zaehlerPerson = 0;
+    long zaehlerGruppe;
     private detailFragment detailFragment;
     private boolean showdetail;
+    public static final String PERSON = "Personen";
 
     static String email;//login -> durch diese kann jeder zugeordnet werden
     static String passwort;//login
@@ -53,20 +55,51 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     static String gruppenpasswort;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
-        showdetail = detailFragment != null && detailFragment.isInLayout();
-        myRef = FirebaseDatabase.getInstance().getReference().child("User");
-        myRef.addValueEventListener(new ValueEventListener() {
+        Intent intent = getIntent();
+        email = intent.getStringExtra("email");
+
+        myUserRef = FirebaseDatabase.getInstance().getReference().child("User");
+        myUserRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
                     zaehler = (dataSnapshot.getChildrenCount());
+
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
+        myPersonenRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    zaehlerPerson = (dataSnapshot.getChildrenCount());
+                }
+                for(DataSnapshot ds : dataSnapshot.getChildren())
+                {
+                    if(ds.child("email").getChildren().equals(email))
+                    {
+                        String vorname = ds.child("vorname").getValue().toString();
+                        String nachname = ds.child("nachname").getValue().toString();
+                        double guthaben = (double) ds.child("guthaben").getValue();
+                        String email = ds.child("emailAdresse").getValue().toString();
+                        long telefonNr = (long) ds.child("telefonNur").getValue();
+                       personen.add(new Person(vorname,nachname,guthaben,email,telefonNr));
+                    }
                 }
             }
 
@@ -75,6 +108,23 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             }
         });
+        myGruppenRef = FirebaseDatabase.getInstance().getReference().child("Gruppen");
+        myGruppenRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    zaehlerGruppe = (dataSnapshot.getChildrenCount());
+                }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
+        showdetail = detailFragment != null && detailFragment.isInLayout();
 
     }
 
@@ -388,47 +438,48 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 alert8.show();
                 break;
 
-
             case R.id.menu_gruppehinzufügen:
 
                 if(admin == true) {
-                AlertDialog.Builder alert9 = new AlertDialog.Builder(this);
-                alert9.setTitle("Gruppe hinzufügen");
-                final View view9 = getLayoutInflater().inflate(R.layout.gruppehinzufegenadmin,null);
-                alert9.setView(view9);
-                alert9.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                    AlertDialog.Builder alert9 = new AlertDialog.Builder(this);
+                    alert9.setTitle("Gruppe hinzufügen");
+                    final View view9 = getLayoutInflater().inflate(R.layout.gruppehinzufegenadmin,null);
+                    alert9.setView(view9);
+                    alert9.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
 
-                        EditText gruppenna = view9.findViewById(R.id.gruppehinz_name);
-                        EditText gruppenpass = view9.findViewById(R.id.gruppehinz_passwort);
+                            EditText gruppenna = view9.findViewById(R.id.gruppehinz_name);
+                            EditText gruppenpass = view9.findViewById(R.id.gruppehinz_passwort);
 
-                        try {
+                            try {
 
-                            String group = gruppenna.getText().toString();
+                                String group = gruppenna.getText().toString();
+
+                                if(MainActivity.gruppen.contains(group))
+                                {
+                                    Toast.makeText(view9.getContext(), "Gruppe existiert bereits",Toast.LENGTH_SHORT).show();
+
+                                }
+                                else {
+                                    MainActivity.gruppe = gruppenna.getText().toString();
+                                    MainActivity.gruppenpasswort = gruppenpass.getText().toString();
+                                    gruppen.add(new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort));
+                                    Toast.makeText(view9.getContext(), "Gruppe hinzugefügt",Toast.LENGTH_SHORT).show();
+                                    writeGruppen();
+                                }
 
 
-                            if(MainActivity.gruppen.contains(group))
+                            }
+                            catch (Exception ex)
                             {
-                                Toast.makeText(view9.getContext(), "Gruppe existiert bereits",Toast.LENGTH_SHORT).show();
 
                             }
-                            else {
-                                MainActivity.gruppe = gruppenna.getText().toString();
-                                MainActivity.gruppenpasswort = gruppenpass.getText().toString();
-                                gruppen.add(new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort));
-                            }
 
-                        }
-                        catch (Exception ex)
-                        {
-
-                        }
-
-                    }}
-                );
-                alert9.setNegativeButton("Zurück",null);
-                alert9.show();
+                        }}
+                    );
+                    alert9.setNegativeButton("Zurück",null);
+                    alert9.show();
                 }else
                 {
                     Toast.makeText(this, "Sie haben keine Berechtigungen um eine Gruppe hinzuzufügen", Toast.LENGTH_SHORT).show();
@@ -445,7 +496,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         int id = v.getId();
     }
-    DatabaseReference myRef;
+    DatabaseReference myUserRef;
+    DatabaseReference myPersonenRef;
+    DatabaseReference myGruppenRef;
 
     public void writeUser()
     {
@@ -454,7 +507,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         user.setPasswort(passwort);
         user.setGruppe(gruppe);
         user.setAdmin(admin);
-            myRef.child(String.valueOf(zaehler+1)).setValue(user);
+            myUserRef.child(String.valueOf(zaehler+1)).setValue(user);
         }
 
     static String value;
@@ -462,8 +515,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     public void loadUser()
     {
-       myRef = FirebaseDatabase.getInstance().getReference().child("User").child("");
-       myRef.addValueEventListener(new ValueEventListener() {
+       myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child("");
+       myUserRef.addValueEventListener(new ValueEventListener() {
            @Override
            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                String email = dataSnapshot.child("email").getValue().toString();
@@ -490,38 +543,15 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     public void writePersonen()
     {
-        DatabaseReference myReference;
-        myReference = FirebaseDatabase.getInstance().getReference().child("Personen");
-        myReference.push().setValue(person);
+        myPersonenRef.child(String.valueOf(zaehlerPerson+1)).setValue(person);
     }
     public void loadPersonen()
     {
-        DatabaseReference myReference;
-        myReference = FirebaseDatabase.getInstance().getReference().child("Personen");
-        myReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                personen.clear();
-                List<String> keys = new ArrayList<>();
-                for(DataSnapshot keyNode: dataSnapshot.getChildren())
-                {
-                    keys.add(keyNode.getKey());
-                    Person person = keyNode.getValue(Person.class);
-                    personen.add(person);
-                    MainActivity.items.add(person.toString());
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        Toast.makeText(this, personen.get(0).toString(),Toast.LENGTH_LONG).show();
     }
     public void writeGruppen()
     {
-
+        myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(gruppe);
     }
     public void loadGruppen()
     {
