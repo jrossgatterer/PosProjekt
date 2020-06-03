@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static String email;//login -> durch diese kann jeder zugeordnet werden
     static String passwort;//login
     static String gruppe;
-    static boolean admin;
+    static boolean admin = false;
 
     static List<User> users = new ArrayList<>();//Personen zum Anmelden
     static List<Gruppe> gruppen = new ArrayList<>();
@@ -75,6 +75,52 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     zaehler = (dataSnapshot.getChildrenCount());
 
                 }
+
+                for (int i = 1; i <= zaehler; i++) {
+
+
+                    myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child(String.valueOf(i));
+                    myUserRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                            User userload = new User();
+
+
+                            String email = dataSnapshot.child("email").getValue().toString();
+                            String passwort = dataSnapshot.child("passwort").getValue().toString();
+                            String gruppe = dataSnapshot.child("gruppe").getValue().toString();
+                            String admin = dataSnapshot.child("admin").getValue().toString();
+
+                            userload.setEmail(email);
+                            userload.setAdmin(Boolean.getBoolean(admin));
+                            userload.setPasswort(passwort);
+                            userload.setGruppe(gruppe);
+
+
+                            if(users.contains(userload))
+                            {
+
+                            }
+                            else
+                            {
+                                users.add(userload);
+                            }
+
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+
+
+
+                    });
+
+                }
+
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -106,6 +152,36 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 {
                     zaehlerGruppe = (dataSnapshot.getChildrenCount());
                 }
+
+                for (int i = 1; i <= zaehlerGruppe; i++) {
+                    myGruppenRef = FirebaseDatabase.getInstance().getReference().child("Gruppen").child(String.valueOf(i));
+                    myGruppenRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                            String gruppenName = dataSnapshot.child("guppenName").getValue().toString();
+                            String gruppenPw = dataSnapshot.child("gruppenPasswort").getValue().toString();
+                            Gruppe gr = new Gruppe(gruppenName,gruppenPw);
+
+                            if(gruppen.contains(gr))
+                            {
+                                Log.d("MainActivity9090", "contains");
+                            }
+                            else
+                            {
+                                gruppen.add(gr);
+                                Log.d("MainActivity9090", gr.guppenName);
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -132,7 +208,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
 
+
     }
+
+
+
+
+
+
 
 
 
@@ -215,6 +298,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
         }
                 break;
+
+
+
+
             case R.id.menu_aktualisieren:
                 Intent intent = new Intent(this, MainActivity.class);
 
@@ -222,8 +309,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                 startActivity(intent);
 
-
-                loadGetaenke();
                 Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
 
                 break;
@@ -312,7 +397,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             MainActivity.email = user.getText().toString();
                             MainActivity.passwort = passw.getText().toString();
                             MainActivity.gruppe = grupp.getText().toString();
-
                             User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,false);
 
 
@@ -371,10 +455,21 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             }
                             else
                             {
-                                Toast.makeText(view7.getContext(),"Registriert",Toast.LENGTH_SHORT).show();
-                                users.add(new User(email, passwort, gruppe,false));
-                                loadPersonen();
-                                loadGetaenke();
+
+                                for (int i = 0; i < gruppen.size(); i++) {
+
+                                    if(gruppen.get(i).guppenName.equals(MainActivity.gruppe))
+                                    {
+                                        Toast.makeText(view7.getContext(),"Registriert",Toast.LENGTH_SHORT).show();
+                                        users.add(new User(email, passwort, gruppe,false));
+                                        loadPersonen();
+                                        loadGetaenke();
+                                    }
+
+
+                                }
+
+
                             }
 
                         }
@@ -528,62 +623,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
 
-    static User userload = new User("","","",false);
-
-    public void loadUser()
-    {
-
-        for (int i = 1; i <= zaehler; i++) {
-
-
-            myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child(String.valueOf(i));
-            myUserRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-
-
-                    String email = dataSnapshot.child("email").getValue().toString();
-                    String passwort = dataSnapshot.child("passwort").getValue().toString();
-                    String gruppe = dataSnapshot.child("gruppe").getValue().toString();
-                    String admin = dataSnapshot.child("admin").getValue().toString();
-
-                    userload.setEmail(email);
-                    userload.setAdmin(Boolean.getBoolean(admin));
-                    userload.setPasswort(passwort);
-                    userload.setGruppe(gruppe);
-
-
-                    if(users.contains(userload))
-                    {
-
-                    }
-                    else
-                    {
-                        users.add(userload);
-
-                    }
-
-
-                }
-
-
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-
-
-
-            });
-            Toast.makeText(this,String.valueOf(users.size()),Toast.LENGTH_SHORT).show();
-
-        }
-
-
-    }
-
 
 
 
@@ -642,14 +681,18 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         }
     }
+
+
+
+
+
     public void writeGruppen()
     {
-        myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(gruppe);
+        Gruppe gr = new Gruppe(gruppe,gruppenpasswort);
+        myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(gr);
     }
-    public void loadGruppen()
-    {
 
-    }
+
 
 
 

@@ -26,4 +26,6 @@ public class Gruppe {
     public void setGruppenPasswort(String gruppenPasswort) {
         this.gruppenPasswort = gruppenPasswort;
     }
+
+
 }

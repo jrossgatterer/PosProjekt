@@ -45,9 +45,8 @@ public class User {
         this.passwort = passwort;
         this.gruppe = gruppe;
         this.admin = admin;
-
-
-
     }
 
+    public User() {
+    }
 }
