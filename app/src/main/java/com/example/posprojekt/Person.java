@@ -7,17 +7,20 @@ public class Person {
     double guthaben;
     String emailAdresse;
     long telefonNr;
+    String gruppenName;
 
     public Person() {
 
     }
 
-    public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr) {
+    public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr,String gruppenName) {
         this.vorname = vorname;
         this.nachname = nachname;
         this.guthaben = guthaben;
         this.emailAdresse = emailAdresse;
         this.telefonNr = telefonNr;
+        this.gruppenName = gruppenName;
+
     }
 
     @Override
@@ -71,5 +74,13 @@ public class Person {
 
     public void setTelefonNr(long telefonNr) {
         this.telefonNr = telefonNr;
+    }
+
+    public String getGruppenName() {
+        return gruppenName;
+    }
+
+    public void setGruppenName(String gruppenName) {
+        this.gruppenName = gruppenName;
     }
 }

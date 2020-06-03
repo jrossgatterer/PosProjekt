@@ -6,6 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
@@ -38,9 +39,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static ArrayList<String> items = new ArrayList<>();
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
     static Person person = new Person();
+    static Getraenk getraenk = new Getraenk();
     long zaehler = 0;
     long zaehlerPerson = 0;
     long zaehlerGruppe;
+    long zaehlerGetraenke;
     private detailFragment detailFragment;
     private boolean showdetail;
     public static final String PERSON = "Personen";
@@ -62,8 +65,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Intent intent = getIntent();
-        email = intent.getStringExtra("email");
 
         myUserRef = FirebaseDatabase.getInstance().getReference().child("User");
         myUserRef.addValueEventListener(new ValueEventListener() {
@@ -89,18 +90,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 {
                     zaehlerPerson = (dataSnapshot.getChildrenCount());
                 }
-                for(DataSnapshot ds : dataSnapshot.getChildren())
-                {
-                    if(ds.child("email").getChildren().equals(email))
-                    {
-                        String vorname = ds.child("vorname").getValue().toString();
-                        String nachname = ds.child("nachname").getValue().toString();
-                        double guthaben = (double) ds.child("guthaben").getValue();
-                        String email = ds.child("emailAdresse").getValue().toString();
-                        long telefonNr = (long) ds.child("telefonNur").getValue();
-                       personen.add(new Person(vorname,nachname,guthaben,email,telefonNr));
-                    }
-                }
+
             }
 
             @Override
@@ -123,10 +113,29 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             }
         });
 
+        myGetraenkeRef = FirebaseDatabase.getInstance().getReference().child("Getraenke");
+        myGetraenkeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists())
+                {
+                    zaehlerGetraenke = (dataSnapshot.getChildrenCount());
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
 
     }
+
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -179,7 +188,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         double guthab = Double.parseDouble(guthanen.getText().toString());
                                         String emai = email.getText().toString();
                                         long teln = Long.parseLong(telnr.getText().toString());
-                                        Person x = new Person(vorn, nach, guthab, emai, teln);
+                                        Person x = new Person(vorn, nach, guthab, emai, teln,gruppe);
                                         items.add(x.toString());
                                         personen.add(x);
                                         MainActivity.person = x;
@@ -214,7 +223,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 startActivity(intent);
 
 
-                //loadUser();
+                loadGetaenke();
                 Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
 
                 break;
@@ -262,7 +271,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
                                 Double preis = Double.parseDouble(getrPreis);
-                                MainActivity.getraenke.add(new Getraenk(name, preis));
+                                MainActivity.getraenke.add(new Getraenk(name, preis,gruppe));
+                                getraenk = new Getraenk(name,preis,gruppe);
+                                writeGetraenke();
                             } catch (Exception ex) {
                                 Toast.makeText(view5.getContext(), "Hinzufügen Fehlgeschlagen", Toast.LENGTH_SHORT).show();
                             }
@@ -309,7 +320,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             {
                                 //Login in Firebase
 
-
+                                loadPersonen();
+                                loadGetaenke();
                             }
                             else
                             {
@@ -361,6 +373,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             {
                                 Toast.makeText(view7.getContext(),"Registriert",Toast.LENGTH_SHORT).show();
                                 users.add(new User(email, passwort, gruppe,false));
+                                loadPersonen();
+                                loadGetaenke();
                             }
 
                         }
@@ -499,6 +513,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     DatabaseReference myUserRef;
     DatabaseReference myPersonenRef;
     DatabaseReference myGruppenRef;
+    DatabaseReference myGetraenkeRef;
 
     public void writeUser()
     {
@@ -510,44 +525,122 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             myUserRef.child(String.valueOf(zaehler+1)).setValue(user);
         }
 
-    static String value;
+
+
+
     static User userload = new User("","","",false);
 
     public void loadUser()
     {
-       myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child("");
-       myUserRef.addValueEventListener(new ValueEventListener() {
-           @Override
-           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-               String email = dataSnapshot.child("email").getValue().toString();
-               String passwort = dataSnapshot.child("passwort").getValue().toString();
-               String gruppe = dataSnapshot.child("gruppe").getValue().toString();
-               String admin = dataSnapshot.child("admin").getValue().toString();
 
-               userload.setEmail(email);
-               userload.setAdmin(Boolean.getBoolean(admin));
-               userload.setPasswort(passwort);
-               userload.setGruppe(gruppe);
+        for (int i = 1; i <= zaehler; i++) {
 
-               users.add(userload);
 
-           }
+            myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child(String.valueOf(i));
+            myUserRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-           @Override
-           public void onCancelled(@NonNull DatabaseError databaseError) {
 
-           }
-       });
+
+                    String email = dataSnapshot.child("email").getValue().toString();
+                    String passwort = dataSnapshot.child("passwort").getValue().toString();
+                    String gruppe = dataSnapshot.child("gruppe").getValue().toString();
+                    String admin = dataSnapshot.child("admin").getValue().toString();
+
+                    userload.setEmail(email);
+                    userload.setAdmin(Boolean.getBoolean(admin));
+                    userload.setPasswort(passwort);
+                    userload.setGruppe(gruppe);
+
+
+                    if(users.contains(userload))
+                    {
+
+                    }
+                    else
+                    {
+                        users.add(userload);
+
+                    }
+
+
+                }
+
+
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+
+
+
+            });
+            Toast.makeText(this,String.valueOf(users.size()),Toast.LENGTH_SHORT).show();
+
+        }
+
 
     }
+
+
+
 
     public void writePersonen()
     {
         myPersonenRef.child(String.valueOf(zaehlerPerson+1)).setValue(person);
     }
+
+
+
     public void loadPersonen()
     {
+        for (int i = 1; i <= zaehlerPerson; i++) {
 
+            myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen").child(String.valueOf(i));
+            myPersonenRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+
+                    String email = dataSnapshot.child("emailAdresse").getValue().toString();
+                    Double guthaben = Double.parseDouble(dataSnapshot.child("guthaben").getValue().toString());
+                    String vorname = dataSnapshot.child("nachname").getValue().toString();
+                    String nachname = dataSnapshot.child("vorname").getValue().toString();
+                    long telefonNr = Long.parseLong(dataSnapshot.child("telefonNr").getValue().toString());
+                    String gruppe = dataSnapshot.child("gruppenName").getValue().toString();
+
+                    if(MainActivity.gruppe.equals(gruppe))
+                    {
+                        MainActivity.items.add(new Person(vorname,nachname,guthaben,email,telefonNr,gruppe).toString());
+                        MainActivity.personen.add(new Person(vorname,nachname,guthaben,email,telefonNr,gruppe));
+                        masterFragment.adapter.notifyDataSetChanged();
+                        masterFragment.listView.setAdapter(masterFragment.adapter);
+                        masterFragment.adapter.notifyDataSetChanged();
+                    }
+                    else
+                    {
+
+                    }
+
+
+                }
+
+
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+
+
+
+            });
+
+
+
+        }
     }
     public void writeGruppen()
     {
@@ -555,6 +648,60 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     }
     public void loadGruppen()
     {
+
+    }
+
+
+
+
+
+
+    public void writeGetraenke()
+    {
+        myGetraenkeRef.child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
+    }
+
+
+
+    public void loadGetaenke()
+    {
+
+        for (int i = 1; i <= zaehlerGetraenke; i++) {
+
+
+        myGetraenkeRef = FirebaseDatabase.getInstance().getReference().child("Getraenke").child(String.valueOf(i));
+        myGetraenkeRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                String getraenkeName = dataSnapshot.child("name").getValue().toString();
+                double getraenkePreis = Double.parseDouble(dataSnapshot.child("preis").getValue().toString());
+                String gruppenName = dataSnapshot.child("gruppenName").getValue().toString();
+
+                if(gruppenName.equals(MainActivity.gruppe)) {
+
+                    if (MainActivity.getraenke.contains(new Getraenk(getraenkeName, getraenkePreis, gruppenName))) {
+
+                    } else {
+                        MainActivity.getraenke.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName));
+                    }
+                }
+                else
+                {
+                    Log.d("MainActivity","Andere Gruppe");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        }
+
+
+
 
     }
 
