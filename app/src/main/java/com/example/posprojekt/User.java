@@ -47,6 +47,5 @@ public class User {
         this.admin = admin;
     }
 
-    public User() {
-    }
+
 }
