@@ -8,22 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Email-Adresse"
+        android:hint="Hier bitte den Gruppennamen eingeben"
         android:inputType="textPersonName" />
 
-    <EditText
-        android:id="@+id/login_passwort"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Passwort"
-        android:inputType="textPersonName" />
-
-    <EditText
-        android:id="@+id/login_gruppe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Gruppe"
-        android:inputType="textPersonName" />
 </LinearLayout>

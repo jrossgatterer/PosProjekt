@@ -380,92 +380,22 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 break;
 
             case R.id.menu_login:
-                //login
-
-                AlertDialog.Builder alert6 = new AlertDialog.Builder(this);
-                alert6.setTitle("Login");
-                final View view6 = getLayoutInflater().inflate(R.layout.loginandregistrieren,null);
-                alert6.setView(view6);
-                alert6.setPositiveButton("Login",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText user = view6.findViewById(R.id.login_username);
-                        EditText passw = view6.findViewById(R.id.login_passwort);
-                        EditText grupp = view6.findViewById(R.id.login_gruppe);
-
-
-                        try {
-
-                            MainActivity.email = user.getText().toString();
-                            MainActivity.passwort = passw.getText().toString();
-                            MainActivity.gruppe = grupp.getText().toString();
-                            User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,false);
-                            User usadmin = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,true);
-
-                            if(users.contains(us) || users.contains(usadmin) )
-                            {
-                                //Login in Firebase
-                                for (int i = 0; i < gruppen.size(); i++) {
-
-                                    if(gruppen.get(i).guppenName.equals(MainActivity.gruppe))
-                                    {
-                                        Toast.makeText(view6.getContext(),"Angemeldet:",Toast.LENGTH_SHORT).show();
-                                        users.add(new User(email, passwort, gruppe,admin));
-                                        loadPersonen();
-                                        loadGetaenke();
-                                    }
-
-
-                                }
-                            }
-                            else
-                            {
-                                Toast.makeText(view6.getContext(), MainActivity.email+": Anmeldedaten sind nicht Korrekt",Toast.LENGTH_SHORT).show();
-                            }
-
-                        }
-                        catch(Exception ex)
-                        {
-                            Toast.makeText(view6.getContext(), "Login Fehlgeschlagen",Toast.LENGTH_SHORT).show();
-                        }
-
-
-                    }}
-                );
-                alert6.setNegativeButton("Zurück",null);
-                alert6.show();
-                break;
-
-
-
-            case R.id.menu_registrieren:
 
                 AlertDialog.Builder alert7 = new AlertDialog.Builder(this);
-                alert7.setTitle("Registrieren");
+                alert7.setTitle("Login");
                 final View view7 = getLayoutInflater().inflate(R.layout.loginandregistrieren,null);
                 alert7.setView(view7);
-                alert7.setPositiveButton("Registrieren",new DialogInterface.OnClickListener() {
+                alert7.setPositiveButton("Login",new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText user = view7.findViewById(R.id.login_username);
-                        EditText passw = view7.findViewById(R.id.login_passwort);
-                        EditText grupp = view7.findViewById(R.id.login_gruppe);
 
                         try {
 
-                            MainActivity.email = user.getText().toString();
-                            MainActivity.passwort = passw.getText().toString();
-                            MainActivity.gruppe = grupp.getText().toString();
+                            MainActivity.gruppe = user.getText().toString();
 
-                            User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,false);
 
-                            if(users.contains(us))
-                            {
-                                //Login
-                                Toast.makeText(view7.getContext(), MainActivity.email+"sie sind bereits Registriert",Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
+
 
                                 for (int i = 0; i < gruppen.size(); i++) {
 
@@ -477,8 +407,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         loadGetaenke();
                                     }
 
-
-                                }
 
 
                             }

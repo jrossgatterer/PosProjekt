@@ -11,10 +11,6 @@
         android:title="Neues Getränk anlegen" />
 
     <item
-        android:id="@+id/menu_registrieren"
-        android:title="Registrieren" />
-
-    <item
         android:id="@+id/menu_login"
         android:title="Login" />
 
