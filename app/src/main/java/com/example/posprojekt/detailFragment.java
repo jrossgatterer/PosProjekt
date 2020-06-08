@@ -19,8 +19,15 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -113,10 +120,14 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                     if (MainActivity.personen.get(position).guthaben > 0) {
                         double preis = getraenk.preis;
                         String name = getraenk.name;
+                        final double endpreis = MainActivity.personen.get(position).guthaben - preis;
                         txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
                         String vorNach = MainActivity.personen.get(position).vorundnachname();
                         MainActivity.personen.get(position).guthaben -= preis;
                         MainActivity.items.remove(position);
+
+
+
 
                         Person person = MainActivity.personen.get(position);
 
@@ -125,6 +136,10 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         MainActivity.items.add(person.toString());
 
                         position = MainActivity.personen.indexOf(person);
+
+
+
+
 
 
                         if (MainActivity.personen.get(position).guthaben <= 5) {
@@ -153,6 +168,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                     MainActivity.personen.remove(position);
                     MainActivity.items.remove(position);
 
+
+                    MainActivity.myPersonenRef.removeValue();
 
                     Intent intent3 = new Intent(v.getContext(), MainActivity.class);
                     startActivity(intent3);

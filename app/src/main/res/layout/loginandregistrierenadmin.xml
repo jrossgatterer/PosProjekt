@@ -4,27 +4,11 @@
     android:layout_height="match_parent">
 
     <EditText
-        android:id="@+id/admin_email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Email-Adresse"
-        android:inputType="textPersonName" />
-
-    <EditText
-        android:id="@+id/admin_passwort"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Passwort"
-        android:inputType="textPassword" />
-
-    <EditText
         android:id="@+id/admin_Gruppe"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:hint="Gruppe"
+        android:hint="Gruppenname"
         android:inputType="textPersonName" />
 
     <EditText

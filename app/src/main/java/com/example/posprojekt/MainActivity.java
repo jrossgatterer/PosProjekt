@@ -41,11 +41,12 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static Person person = new Person();
     static Getraenk getraenk = new Getraenk();
     long zaehlerUser;
-    long zaehlerPerson;
+    static long zaehlerPerson;
     long zaehlerGruppe;
     long zaehlerGetraenke;
     private detailFragment detailFragment;
     private boolean showdetail;
+    static int id = 0;
 
     static String email;//login -> durch diese kann jeder zugeordnet werden
     static String passwort;//login
@@ -64,67 +65,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        myUserRef = FirebaseDatabase.getInstance().getReference().child("User");
-        myUserRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists())
-                {
-                    zaehlerUser = (dataSnapshot.getChildrenCount());
 
-                }
-
-                for (int i = 1; i <= zaehlerUser; i++) {
-
-
-                    myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child(String.valueOf(i));
-                    myUserRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                            User userload = new User("","","",false);
-
-
-                            String email = dataSnapshot.child("email").getValue().toString();
-                            String passwort = dataSnapshot.child("passwort").getValue().toString();
-                            String gruppe = dataSnapshot.child("gruppe").getValue().toString();
-                            String admin = dataSnapshot.child("admin").getValue().toString();
-
-                            userload.setEmail(email);
-                            userload.setAdmin(Boolean.getBoolean(admin));
-                            userload.setPasswort(passwort);
-                            userload.setGruppe(gruppe);
-
-
-                            if(users.contains(userload))
-                            {
-
-                            }
-                            else
-                            {
-                                users.add(userload);
-                            }
-
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-
-
-
-                    });
-
-                }
-
-            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
 
         myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
         myPersonenRef.addValueEventListener(new ValueEventListener() {
@@ -401,7 +342,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                                     if(gruppen.get(i).guppenName.equals(MainActivity.gruppe))
                                     {
-                                        Toast.makeText(view7.getContext(),"Registriert",Toast.LENGTH_SHORT).show();
+                                        MainActivity.admin = false;
+                                        Toast.makeText(view7.getContext(),"Erfolgreiche anmeldung",Toast.LENGTH_SHORT).show();
                                         users.add(new User(email, passwort, gruppe,false));
                                         loadPersonen();
                                         loadGetaenke();
@@ -417,7 +359,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             Toast.makeText(view7.getContext(), "Registrieren Fehlgeschlagen",Toast.LENGTH_SHORT).show();
                         }
 
-                        writeUser();
+
                     }}
                 );
                 alert7.setNegativeButton("Zurück",null);
@@ -432,15 +374,12 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 alert8.setPositiveButton("Login als Admin",new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        EditText user = view8.findViewById(R.id.admin_email);
-                        EditText passw = view8.findViewById(R.id.admin_passwort);
+
                         EditText grupp = view8.findViewById(R.id.admin_Gruppe);
                         Switch sw = view8.findViewById(R.id.admin_switch);
                         EditText grupppas = view8.findViewById(R.id.admin_grupppasswort);
                         try {
 
-                            MainActivity.email = user.getText().toString();
-                            MainActivity.passwort = passw.getText().toString();
                             MainActivity.gruppe = grupp.getText().toString();
                             MainActivity.admin = sw.isChecked();
                             MainActivity.gruppenpasswort = grupppas.getText().toString();
@@ -449,37 +388,46 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,admin);
 
 
-                            Gruppe gruppe1 = new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort);
+                            Gruppe gr = new Gruppe("","");
 
-                            if(gruppen.contains(gruppe1))
+                            for (int i = 0; i < gruppen.size(); i++) {
+
+                                if(MainActivity.gruppe.equals(gruppen.get(i).guppenName))
+                                {
+
+                                    if(MainActivity.gruppenpasswort.equals(gruppen.get(i).gruppenPasswort))
+                                    {
+                                        gr = gruppen.get(i);
+                                    }
+                                    else {
+
+                                        Toast.makeText(view8.getContext(), "Falsches Passwort für die Gruppe", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+
+
+                            }
+
+
+                            if((gr.guppenName.equals(grupp.getText().toString()) && (gr.gruppenPasswort.equals(grupppas.getText().toString()))))
                             {
-                                Toast.makeText(view8.getContext(), "Name oder Passwort nicht korrekt",Toast.LENGTH_SHORT).show();
+                                    loadPersonen();
+                                    loadGetaenke();
+                                Toast.makeText(view8.getContext(),"Als Admin angemeldet",Toast.LENGTH_SHORT).show();
                             }
                             else
                             {
-                                if(users.contains(us) && !users.contains(us.gruppe))
-                                {
-                                    //Login
-                                    //
-                                    
 
-                                }
-                                else
-                                {
-                                    writeUser();
 
                                     for (int i = 0; i < gruppen.size(); i++) {
 
                                         if(gruppen.get(i).guppenName.equals(MainActivity.gruppe))
                                         {
-                                            Toast.makeText(view8.getContext(),"Neuer Admin",Toast.LENGTH_SHORT).show();
-                                            users.add(new User(email, passwort, gruppe,admin));
-                                            loadPersonen();
-                                            loadGetaenke();
+                                            Toast.makeText(view8.getContext(),"Neuer Admin, bitte lege eine neue Gruppe an",Toast.LENGTH_SHORT).show();
                                         }
 
 
-                                    }
+
                                 }
                             }
 
@@ -557,7 +505,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         int id = v.getId();
     }
     DatabaseReference myUserRef;
-    DatabaseReference myPersonenRef;
+    static DatabaseReference myPersonenRef;
     DatabaseReference myGruppenRef;
     DatabaseReference myGetraenkeRef;
 
@@ -571,7 +519,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     {
         for (int i = 1; i <= zaehlerUser; i++) {
 
-
+            MainActivity.id = i;
             myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child(String.valueOf(i));
             myUserRef.addValueEventListener(new ValueEventListener() {
                 @Override
@@ -643,11 +591,18 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                     if(MainActivity.gruppe.equals(gruppe))
                     {
-                        MainActivity.items.add(new Person(vorname,nachname,guthaben,email,telefonNr,gruppe).toString());
-                        MainActivity.personen.add(new Person(vorname,nachname,guthaben,email,telefonNr,gruppe));
-                        masterFragment.adapter.notifyDataSetChanged();
-                        masterFragment.listView.setAdapter(masterFragment.adapter);
-                        masterFragment.adapter.notifyDataSetChanged();
+
+                        if(MainActivity.personen.contains(new Person(vorname,nachname,guthaben,email,telefonNr,gruppe)))
+                        {
+
+                        }
+                        else {
+                            MainActivity.items.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe).toString());
+                            MainActivity.personen.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe));
+                            masterFragment.adapter.notifyDataSetChanged();
+                            masterFragment.listView.setAdapter(masterFragment.adapter);
+                            masterFragment.adapter.notifyDataSetChanged();
+                        }
                     }
                     else
                     {
