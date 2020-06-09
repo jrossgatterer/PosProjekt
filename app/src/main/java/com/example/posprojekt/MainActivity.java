@@ -4,11 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,7 +39,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener {
 
-
+    private static final int MY_Permission = 0;
     static ArrayList<Person> personen = new ArrayList<>();//Personen der Liste
     static ArrayList<String> items = new ArrayList<>();
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
@@ -149,12 +153,72 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             }
         });
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_FINE_LOCATION))
+            {
 
+            }
+            else
+            {
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION},MY_Permission);
+            }
+
+        }
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
 
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permission[], int[] grantResults)
+    {
+        switch(requestCode)
+        {
+            case MY_Permission:
+            {
+                if(grantResults.length > 0 && grantResults[0]== PackageManager.PERMISSION_GRANTED)
+                {
+                    Toast.makeText(this, "Zugang gewährt",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
