@@ -7,7 +7,7 @@
         android:id="@+id/textperson"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-black"
-        android:text="TextView"
-        />
+        android:background="@color/color2"
+        android:fontFamily="monospace"
+        android:text="TextView" />
 </LinearLayout>

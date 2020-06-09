@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.bartender);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
         myPersonenRef.addValueEventListener(new ValueEventListener() {
@@ -510,64 +513,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     DatabaseReference myGetraenkeRef;
 
 
-    public void writeUser()
-    {
-        myUserRef.child(String.valueOf(zaehlerPerson+1)).setValue(new User(email,passwort,gruppe,admin));
-    }
-
-    public void loadUser()
-    {
-        for (int i = 1; i <= zaehlerUser; i++) {
-
-            MainActivity.id = i;
-            myUserRef = FirebaseDatabase.getInstance().getReference().child("User").child(String.valueOf(i));
-            myUserRef.addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
-                    String emaill = dataSnapshot.child("email").getValue().toString();
-                    String passwort = dataSnapshot.child("passwort").getValue().toString();
-                    String gruppe = dataSnapshot.child("gruppe").getValue().toString();
-                    String admin = dataSnapshot.child("admin").getValue().toString();
-
-                    MainActivity.email = emaill;
-
-                    User userload = new User(emaill,passwort,gruppe,Boolean.parseBoolean(admin));
-
-
-
-                    if(users.contains(userload))
-                    {
-
-                    }
-                    else
-                    {
-                        users.add(userload);
-                    }
-
-
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                }
-
-
-
-            });
-
-
-
-        }
-    }
-
 
 
     public void writePersonen()
     {
-        myPersonenRef.child(String.valueOf(zaehlerPerson+1)).setValue(person);
+        myPersonenRef.getParent().child(String.valueOf(zaehlerPerson+1)).setValue(person);
     }
 
 
@@ -633,7 +583,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     public void writeGruppen()
     {
         Gruppe gr = new Gruppe(gruppe,gruppenpasswort);
-        myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(gr);
+        myGruppenRef.getParent().child(String.valueOf(zaehlerGruppe+1)).setValue(gr);
     }
 
 
@@ -645,7 +595,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     public void writeGetraenke()
     {
-        myGetraenkeRef.child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
+        myGetraenkeRef.getParent().child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
     }
 
 
