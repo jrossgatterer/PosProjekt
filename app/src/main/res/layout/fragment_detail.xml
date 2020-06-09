@@ -9,41 +9,60 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@mipmap/backgroundino">
 
 
         <TextView
             android:id="@+id/textViewName"
-            android:layout_width="match_parent"
+            android:layout_width="232dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/color2"
+            android:backgroundTint="@color/color2"
             android:text="TextView"
             android:textSize="18sp" />
+
 
         <TextView
             android:id="@+id/textViewGuthaben"
-            android:layout_width="match_parent"
+            android:layout_width="232dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/color2"
+            android:backgroundTint="@color/color2"
             android:text="TextView"
             android:textSize="18sp" />
 
+
         <TextView
             android:id="@+id/textViewEmail"
-            android:layout_width="match_parent"
+            android:layout_width="232dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/color2"
+            android:backgroundTint="@color/color2"
             android:text="TextView"
             android:textSize="18sp" />
 
         <TextView
             android:id="@+id/textViewTelefonnr"
-            android:layout_width="match_parent"
+            android:layout_width="232dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@color/color2"
+            android:backgroundTint="@color/color2"
             android:text="TextView"
             android:textSize="18sp" />
 
+
         <Spinner
             android:id="@+id/spinnergetraenke"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="200dp"
+            android:layout_height="39dp"
+            android:layout_gravity="center"
+            android:background="@color/color2"
+            android:backgroundTint="@color/color2" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -52,26 +71,35 @@
 
             <Button
                 android:id="@+id/getraenkhinzufuegen"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/color2"
                 android:text="Getränk hinzufügen" />
 
             <Button
                 android:id="@+id/guthabenerweitern"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/color2"
                 android:text="Guthaben hinzufügen" />
 
             <Button
                 android:id="@+id/loeschen"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/color2"
                 android:text="Löschen" />
+
 
             <Button
                 android:id="@+id/cancel"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/color2"
                 android:text="Zurück" />
         </LinearLayout>
 

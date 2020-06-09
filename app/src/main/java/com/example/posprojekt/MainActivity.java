@@ -66,9 +66,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setLogo(R.mipmap.bartender);
-        getSupportActionBar().setDisplayUseLogoEnabled(true);
+        //getSupportActionBar().setDisplayShowHomeEnabled(true);
+        //getSupportActionBar().setLogo(R.mipmap.bartender);
+        //getSupportActionBar().setDisplayUseLogoEnabled(true);
 
         myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
         myPersonenRef.addValueEventListener(new ValueEventListener() {
@@ -424,10 +424,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                                     for (int i = 0; i < gruppen.size(); i++) {
 
-                                        if(gruppen.get(i).guppenName.equals(MainActivity.gruppe))
-                                        {
-                                            Toast.makeText(view8.getContext(),"Neuer Admin, bitte lege eine neue Gruppe an",Toast.LENGTH_SHORT).show();
-                                        }
+
+                                            writeGruppen();
+                                            Toast.makeText(view8.getContext(),"Neue Gruppe wurde erstellt",Toast.LENGTH_SHORT).show();
 
 
 
