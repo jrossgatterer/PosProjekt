@@ -449,53 +449,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 alert8.show();
                 break;
 
-            case R.id.menu_gruppehinzufügen:
 
-                if(admin == true) {
-                    AlertDialog.Builder alert9 = new AlertDialog.Builder(this);
-                    alert9.setTitle("Gruppe hinzufügen");
-                    final View view9 = getLayoutInflater().inflate(R.layout.gruppehinzufegenadmin,null);
-                    alert9.setView(view9);
-                    alert9.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            EditText gruppenna = view9.findViewById(R.id.gruppehinz_name);
-                            EditText gruppenpass = view9.findViewById(R.id.gruppehinz_passwort);
-
-                            try {
-
-                                String group = gruppenna.getText().toString();
-
-                                if(MainActivity.gruppen.contains(group))
-                                {
-                                    Toast.makeText(view9.getContext(), "Gruppe existiert bereits",Toast.LENGTH_SHORT).show();
-
-                                }
-                                else {
-                                    MainActivity.gruppe = gruppenna.getText().toString();
-                                    MainActivity.gruppenpasswort = gruppenpass.getText().toString();
-                                    gruppen.add(new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort));
-                                    Toast.makeText(view9.getContext(), "Gruppe hinzugefügt",Toast.LENGTH_SHORT).show();
-                                    writeGruppen();
-                                }
-
-
-                            }
-                            catch (Exception ex)
-                            {
-
-                            }
-
-                        }}
-                    );
-                    alert9.setNegativeButton("Zurück",null);
-                    alert9.show();
-                }else
-                {
-                    Toast.makeText(this, "Sie haben keine Berechtigungen um eine Gruppe hinzuzufügen", Toast.LENGTH_SHORT).show();
-                }
-                break;
 
         }
 
