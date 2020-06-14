@@ -1,4 +1,5 @@
 # PosProjekt
 Tomandl-Fröhler-Roßgatterer
 
-bartending.
+bartending App
+
