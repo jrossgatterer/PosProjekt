@@ -1,8 +1,10 @@
 package com.example.posprojekt;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -21,6 +23,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -36,6 +40,13 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -47,6 +58,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;
@@ -61,6 +73,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     private TextView txt4; //Telnr
     private EditText smstxt;
 
+    MapView map;
+
     Button getraenkhinzufuegen;
     Button zurueck;
     Button loeschen;
@@ -69,9 +83,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
     int position;
     Getraenk getraenk;
-
-    protected LocationManager locationManager;
-    Location location;
 
 
 
@@ -101,6 +112,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         spinner.setAdapter(new ArrayAdapter<Getraenk>(view.getContext(), android.R.layout.simple_list_item_1, MainActivity.getraenke));
         sms = view.findViewById(R.id.sms);
         smstxt = view.findViewById(R.id.smsText);
+        map = view.findViewById(R.id.mapView);
 
 
     }
@@ -120,6 +132,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         txt4.setText(String.valueOf(MainActivity.personen.get(pos).telefonNr));
         this.position = pos;
         spinner.setOnItemSelectedListener(this);
+
 
         if (MainActivity.personen.get(pos).guthaben < 5) {
             txt2.setBackgroundColor(Color.RED);
@@ -244,38 +257,55 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
             case R.id.sms:
 
-                AlertDialog.Builder alert2 = new AlertDialog.Builder(v.getContext());
-                alert2.setTitle("SMS");
-                final View view = getLayoutInflater().inflate(R.layout.smssendenlayout, null);
-                alert2.setView(view);
-                alert2.setPositiveButton("Senden", new DialogInterface.OnClickListener() {
-                            @SuppressLint("MissingPermission")
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
 
-                                String smstext = "";
-                                try {
-                                    smstext = smstxt.getText().toString();
-                                } catch (Exception ex) {
-                                    Toast.makeText(v.getContext(), "Fehler beim Formatieren", Toast.LENGTH_SHORT).show();
-                                }
+                final Dialog dialog = new Dialog(getActivity());
+
+                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                /////make map clear
+                dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
+
+                dialog.setContentView(R.layout.smssendenlayout);////your custom content
+
+                MapView mMapView = (MapView) dialog.findViewById(R.id.mapView);
+                MapsInitializer.initialize(getActivity());
 
 
-                                SmsManager sms = SmsManager.getDefault();
-                                //sms.sendTextMessage();
+                mMapView.onResume();
+
+
+                mMapView.getMapAsync(new OnMapReadyCallback() {
+                    @Override
+                    public void onMapReady(final GoogleMap googleMap) {
+                        LatLng posisiabsen = new LatLng(19.09,23.06); ////your lat lng
+                        googleMap.addMarker(new MarkerOptions().position(posisiabsen).title("Yout title"));
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(posisiabsen));
+                        googleMap.getUiSettings().setZoomControlsEnabled(true);
+                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
+                    }
+                });
+
+
+                Button dialogButton = (Button) dialog.findViewById(R.id.click);
+// if button is clicked, close the custom dialog
+                dialogButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                });
+
+                dialog.show();
 
 
 
-                            }
-                        }
-                );
-                alert2.setNegativeButton("Zurück", null);
-                alert2.show();
 
                 break;
         }
 
     }
+
+    Location standort = null;
+
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {

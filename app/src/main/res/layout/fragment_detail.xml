@@ -95,6 +95,14 @@
 
 
             <Button
+                android:id="@+id/sms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/color2"
+                android:text="Einladen per sms" />
+
+            <Button
                 android:id="@+id/cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -102,13 +110,6 @@
                 android:backgroundTint="@color/color2"
                 android:text="Zurück" />
 
-            <Button
-                android:id="@+id/sms"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/color2"
-                android:text="Einladen per sms"/>
         </LinearLayout>
 
     </LinearLayout>
