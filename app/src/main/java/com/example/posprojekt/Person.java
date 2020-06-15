@@ -8,7 +8,7 @@ public class Person {
     String emailAdresse;
     long telefonNr;
     String gruppenName;
-    int id;
+   
 
     public Person() {
 
@@ -16,17 +16,7 @@ public class Person {
 
 
 
-    public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr,String gruppenName, int id) {
-        this.vorname = vorname;
-        this.nachname = nachname;
-        this.guthaben = guthaben;
-        this.emailAdresse = emailAdresse;
-        this.telefonNr = telefonNr;
-        this.gruppenName = gruppenName;
-        this.id = id;
-
-    }
-
+   
     public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr,String gruppenName) {
         this.vorname = vorname;
         this.nachname = nachname;
@@ -40,14 +30,6 @@ public class Person {
     public String toString()
     {
         return this.vorname+" "+this.nachname + " "+ this.guthaben+ "€";
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 
     public  String vorundnachname()

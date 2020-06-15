@@ -2,9 +2,13 @@ package com.example.posprojekt;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,7 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener, LocationListener {
 
     private static final int MY_Permission = 0;
     static ArrayList<Person> personen = new ArrayList<>();//Personen der Liste
@@ -54,6 +58,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static List<Gruppe> gruppen = new ArrayList<>();
 
     static String gruppenpasswort;
+
+  static double lat;
+  static double lon;
+  static LocationManager lm;
+  Location location;
 
 
 
@@ -180,8 +189,15 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
 
+        lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        location = lm.getLastKnownLocation(lm.NETWORK_PROVIDER);
+
+        onLocationChanged(location);
 
     }
+
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permission[], int[] grantResults)
@@ -513,7 +529,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     public void writePersonen()
     {
-        myPersonenRef.getParent().child(String.valueOf(zaehlerPerson+1)).setValue(person);
+        myPersonenRef.child(String.valueOf(zaehlerPerson+1)).setValue(person);
     }
 
 
@@ -638,4 +654,24 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     }
 
+    @Override
+    public void onLocationChanged(Location location) {
+        lat = location.getLatitude();
+        lon = location.getLongitude();
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
+    }
 }

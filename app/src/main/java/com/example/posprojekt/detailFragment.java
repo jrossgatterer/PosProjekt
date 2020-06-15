@@ -1,10 +1,9 @@
 package com.example.posprojekt;
 
 import android.Manifest;
-import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
+import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -23,8 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -40,13 +37,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -58,13 +48,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static android.content.Context.LOCATION_SERVICE;
+import static android.content.Context.NETWORK_STATS_SERVICE;
 import static androidx.core.content.ContextCompat.getSystemService;
 
 
-public class detailFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener, LocationListener {
+public class detailFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private TextView txt1; //Name
     private TextView txt2; //Guthaben
@@ -72,8 +62,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     private TextView txt3; //Email
     private TextView txt4; //Telnr
     private EditText smstxt;
-
-    MapView map;
 
     Button getraenkhinzufuegen;
     Button zurueck;
@@ -84,6 +72,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     int position;
     Getraenk getraenk;
 
+    protected LocationManager locationManager;
+    Location location;
 
 
     @Override
@@ -112,7 +102,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         spinner.setAdapter(new ArrayAdapter<Getraenk>(view.getContext(), android.R.layout.simple_list_item_1, MainActivity.getraenke));
         sms = view.findViewById(R.id.sms);
         smstxt = view.findViewById(R.id.smsText);
-        map = view.findViewById(R.id.mapView);
 
 
     }
@@ -132,7 +121,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         txt4.setText(String.valueOf(MainActivity.personen.get(pos).telefonNr));
         this.position = pos;
         spinner.setOnItemSelectedListener(this);
-
 
         if (MainActivity.personen.get(pos).guthaben < 5) {
             txt2.setBackgroundColor(Color.RED);
@@ -171,6 +159,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                         position = MainActivity.personen.indexOf(person);
 
+                        MainActivity.myPersonenRef.setValue(person);
+
 
                         if (MainActivity.personen.get(position).guthaben <= 5) {
                             Toast.makeText(v.getContext(), "Achtung! Es sind noch " + MainActivity.personen.get(position).guthaben + "€ verfügbar.", Toast.LENGTH_SHORT).show();
@@ -198,6 +188,12 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                     MainActivity.personen.remove(position);
                     MainActivity.items.remove(position);
 
+                    MainActivity.myPersonenRef.removeValue(new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                Toast.makeText(getContext(), "Geloescht",Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
                     Intent intent3 = new Intent(v.getContext(), MainActivity.class);
                     startActivity(intent3);
@@ -236,6 +232,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                                         position = MainActivity.personen.indexOf(person);
 
+                                        MainActivity.myPersonenRef.setValue(person);
+
                                         txt2.setText(gut + " €");
 
                                         Toast.makeText(v.getContext(), "Neues Guthaben: " + gut, Toast.LENGTH_SHORT).show();
@@ -257,55 +255,66 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
             case R.id.sms:
 
+                AlertDialog.Builder alert2 = new AlertDialog.Builder(v.getContext());
+                alert2.setTitle("SMS");
+                final View view = getLayoutInflater().inflate(R.layout.smssendenlayout, null);
+                alert2.setView(view);
+                alert2.setPositiveButton("Senden", new DialogInterface.OnClickListener() {
+                            @SuppressLint("MissingPermission")
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                final Dialog dialog = new Dialog(getActivity());
-
-                dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                /////make map clear
-                dialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND);
-
-                dialog.setContentView(R.layout.smssendenlayout);////your custom content
-
-                MapView mMapView = (MapView) dialog.findViewById(R.id.mapView);
-                MapsInitializer.initialize(getActivity());
-
-
-                mMapView.onResume();
+                                smstxt = view.findViewById(R.id.smsText);
 
 
-                mMapView.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(final GoogleMap googleMap) {
-                        LatLng posisiabsen = new LatLng(19.09,23.06); ////your lat lng
-                        googleMap.addMarker(new MarkerOptions().position(posisiabsen).title("Yout title"));
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(posisiabsen));
-                        googleMap.getUiSettings().setZoomControlsEnabled(true);
-                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-                    }
-                });
+                                String smstext = "";
+                                try {
+                                    smstext = smstxt.getText().toString();
+                                } catch (Exception ex) {
+                                    Toast.makeText(v.getContext(), "Fehler beim Formatieren", Toast.LENGTH_SHORT).show();
+                                }
 
 
-                Button dialogButton = (Button) dialog.findViewById(R.id.click);
-// if button is clicked, close the custom dialog
-                dialogButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        dialog.dismiss();
-                    }
-                });
-
-                dialog.show();
+                                SmsManager sms = SmsManager.getDefault();
 
 
+                                Context context;
+                                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
+                                try {
+                                    List<Address> list = geocoder.getFromLocation(MainActivity.lat, MainActivity.lon,1);
+                                    Toast.makeText(getContext(),list.get(0).getLocality(),Toast.LENGTH_SHORT).show();
+                                    smstext+= "\n"+list.get(0).getLocality();
+
+                                } catch (IOException e) {
+                                    Toast.makeText(getContext(), "Fehler beim finden des Standorts", Toast.LENGTH_SHORT).show();
+                                }
+
+                                long telnr = MainActivity.personen.get(position).telefonNr;
+                                try {
+                                    sms.sendTextMessage(String.valueOf(telnr),null, smstext, null,null);
+                                    Toast.makeText(getContext(),"SMS mit Standort wurde gesendet",Toast.LENGTH_SHORT).show();
+                                }
+                                catch(Exception ex)
+                                {
+                                    Toast.makeText(getContext(),"Fehler beim Senden der SMS",Toast.LENGTH_SHORT).show();
+                                }
+
+
+
+
+
+
+                            }
+                        }
+                );
+                alert2.setNegativeButton("Zurück", null);
+                alert2.show();
 
                 break;
         }
 
     }
-
-    Location standort = null;
-
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -315,31 +324,9 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     }
 
 
-
-
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
 
     }
 
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 }
