@@ -14,9 +14,6 @@ public class Person {
 
     }
 
-
-
-   
     public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr,String gruppenName) {
         this.vorname = vorname;
         this.nachname = nachname;

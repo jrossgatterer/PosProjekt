@@ -72,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         setContentView(R.layout.activity_main);
 
 
-
         myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
         myPersonenRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -168,9 +167,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         }
 
-
-
-
         if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
         {
             if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.ACCESS_COARSE_LOCATION))
@@ -184,8 +180,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             }
 
         }
-
-
+        
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
 
@@ -214,15 +209,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             }
         }
     }
-
-
-
-
-
-
-
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -303,9 +289,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         }
                 break;
 
-
-
-
             case R.id.menu_aktualisieren:
                 Intent intent = new Intent(this, MainActivity.class);
 
@@ -316,9 +299,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
 
                 break;
-
-
-
 
 
             case R.id.menu_newGetraenk:
@@ -367,10 +347,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                 Toast.makeText(view5.getContext(), "Hinzufügen Fehlgeschlagen", Toast.LENGTH_SHORT).show();
                             }
 
-
-
-
-
                     }}
                 );
                 alert5.setNegativeButton("Zurück",null);
@@ -411,8 +387,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         loadGetaenke();
                                     }
 
-
-
                             }
 
                         }
@@ -420,7 +394,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         {
                             Toast.makeText(view7.getContext(), "Registrieren Fehlgeschlagen",Toast.LENGTH_SHORT).show();
                         }
-
 
                     }}
                 );
@@ -525,14 +498,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     DatabaseReference myGetraenkeRef;
 
 
-
-
     public void writePersonen()
     {
         myPersonenRef.child(String.valueOf(zaehlerPerson+1)).setValue(person);
     }
-
-
 
     public void loadPersonen()
     {
@@ -542,7 +511,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             myPersonenRef.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
 
                     String email = dataSnapshot.child("emailAdresse").getValue().toString();
                     Double guthaben = Double.parseDouble(dataSnapshot.child("guthaben").getValue().toString());
@@ -573,19 +541,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
                 }
-
-
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
 
                 }
-
-
-
             });
-
-
 
         }
     }
@@ -598,19 +558,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         myGruppenRef.getParent().child(String.valueOf(zaehlerGruppe+1)).setValue(gr);
     }
 
-
-
-
-
-
-
-
     public void writeGetraenke()
     {
         myGetraenkeRef.getParent().child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
     }
-
-
 
     public void loadGetaenke()
     {
@@ -648,10 +599,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             }
         });
         }
-
-
-
-
     }
 
     @Override
