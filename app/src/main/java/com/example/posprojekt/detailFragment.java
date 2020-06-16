@@ -112,6 +112,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         super.onStart();
     }
 
+
     @RequiresApi(api = Build.VERSION_CODES.O)
     public void showInformation(int pos, String item) {
 
@@ -121,7 +122,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         txt4.setText(String.valueOf(MainActivity.personen.get(pos).telefonNr));
         this.position = pos;
         spinner.setOnItemSelectedListener(this);
-        spinner.setPrompt("Pick your drink");
+        spinner.setPrompt("Wähle dein Getränk");
 
         if (MainActivity.personen.get(pos).guthaben < 5) {
             txt2.setBackgroundColor(Color.RED);
@@ -145,6 +146,18 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                     if (MainActivity.personen.get(position).guthaben > 0) {
                         double preis = getraenk.preis;
                         String name = getraenk.name;
+
+                        for (int i = 0; i < MainActivity.getraenke.size(); i++) {
+
+                            if(MainActivity.getraenke.get(i).getName().equals(name))
+                            {
+                                int anzVorher = MainActivity.getraenke.get(i).getAnzahl();
+                                MainActivity.getraenke.get(i).setAnzahl(anzVorher+=1);
+                            }
+
+
+                        }
+
                         final double endpreis = MainActivity.personen.get(position).guthaben - preis;
                         txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
                         String vorNach = MainActivity.personen.get(position).vorundnachname();
@@ -153,7 +166,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
 
                         Person person = MainActivity.personen.get(position);
-
                         MainActivity.personen.remove(position);
                         MainActivity.personen.add(person);
                         MainActivity.items.add(person.toString());

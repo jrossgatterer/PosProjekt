@@ -19,8 +19,8 @@
         android:title="Login als Admin" />
 
     <item
-        android:id="@+id/menu_aktualisieren"
-        android:title="Aktualisieren" />
+        android:id="@+id/menu_statistiken"
+        android:title="Statistik" />
 
     <item
         android:id="@+id/preferences"

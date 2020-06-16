@@ -5,7 +5,15 @@ public class Getraenk {
     String name;
     double preis;
     String gruppenName;
+    int anzahl;
 
+
+    public Getraenk(String name, double preis, String gruppenName, int anzahl) {
+        this.name = name;
+        this.preis = preis;
+        this.gruppenName = gruppenName;
+        this.anzahl = anzahl;
+    }
 
     public Getraenk(String name, double preis, String gruppenName) {
         this.name = name;
@@ -13,7 +21,13 @@ public class Getraenk {
         this.gruppenName = gruppenName;
     }
 
-    public Getraenk() {
+
+    public int getAnzahl() {
+        return anzahl;
+    }
+
+    public void setAnzahl(int anzahl) {
+        this.anzahl = anzahl;
     }
 
     public String getName() {
@@ -44,5 +58,11 @@ public class Getraenk {
     public String toString()
     {
         return this.name+" "+this.preis + "€";
+    }
+
+
+    public String GetraenkeNameundAnzahl()
+    {
+        return getName()+ ":  "+getAnzahl()+"x";
     }
 }

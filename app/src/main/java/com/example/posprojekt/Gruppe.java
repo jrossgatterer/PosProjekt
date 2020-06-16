@@ -11,9 +11,6 @@ public class Gruppe {
         this.gruppenPasswort = gruppenPasswort;
     }
 
-    public Gruppe() {
-
-    }
 
     public String getGuppenName() {
         return guppenName;

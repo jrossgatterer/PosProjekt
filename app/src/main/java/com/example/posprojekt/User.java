@@ -8,6 +8,16 @@ public class User {
     boolean admin;
 
 
+    public User(String email, String passwort, String gruppe, boolean admin) {
+        this.email = email;
+        this.passwort = passwort;
+        this.gruppe = gruppe;
+        this.admin = admin;
+    }
+
+
+    
+
     public String getEmail() {
         return email;
     }
@@ -37,13 +47,6 @@ public class User {
     }
 
     public void setAdmin(boolean admin) {
-        this.admin = admin;
-    }
-
-    public User(String email, String passwort, String gruppe, boolean admin) {
-        this.email = email;
-        this.passwort = passwort;
-        this.gruppe = gruppe;
         this.admin = admin;
     }
 

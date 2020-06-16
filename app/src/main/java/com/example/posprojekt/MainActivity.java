@@ -15,7 +15,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -40,9 +42,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static ArrayList<Person> personen = new ArrayList<>();//Personen der Liste
     static ArrayList<String> items = new ArrayList<>();
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
-    static Person person = new Person();
-    static Getraenk getraenk = new Getraenk();
-    static Gruppe neueGruppe = new Gruppe();
+    static Person person = null;
+    static Getraenk getraenk = null;
+    static Gruppe neueGruppe = null;
     static long zaehlerPerson;
     long zaehlerGruppe;
     long zaehlerGetraenke;
@@ -52,7 +54,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     static String email;//login -> durch diese kann jeder zugeordnet werden
     static String passwort;//login
-    static String gruppe;
+    static String gruppe = null;
     static boolean admin = false;
 
     static List<User> users = new ArrayList<>();//Personen zum Anmelden
@@ -184,7 +186,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         location = lm.getLastKnownLocation(lm.NETWORK_PROVIDER);
 
-        //onLocationChanged(location);
+        onLocationChanged(location);
     }
 
     @Override
@@ -281,16 +283,59 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         }
                 break;
 
-            case R.id.menu_aktualisieren:
-                Intent intent = new Intent(this, MainActivity.class);
 
 
 
-                startActivity(intent);
 
-                Toast.makeText(this,"Aktualisiert",Toast.LENGTH_SHORT).show();
 
+
+            case R.id.menu_statistiken:
+
+
+                AlertDialog.Builder alert3 = new AlertDialog.Builder(this);
+                alert3.setTitle("Statistik");
+                final View view3 = getLayoutInflater().inflate(R.layout.statistiken,null);
+                alert3.setView(view3);
+
+                ListView listView = view3.findViewById(R.id.listview_statistiken);
+
+                List<String> listStatistik = new ArrayList<>();
+
+                for (int i = 0; i < getraenke.size(); i++) {
+
+                    listStatistik.add(getraenke.get(i).GetraenkeNameundAnzahl());
+
+                }
+
+                ArrayAdapter<String> adapter;
+                adapter =
+                        new ArrayAdapter<>(
+                               this,
+                                android.R.layout.simple_list_item_1,
+                                listStatistik
+                        );
+                listView.setAdapter(adapter);
+                adapter.notifyDataSetChanged();
+
+                alert3.setNegativeButton("Okay",null);
+                alert3.show();
                 break;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
             case R.id.menu_newGetraenk:
@@ -329,7 +374,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
 
                                 Double preis = Double.parseDouble(getrPreis);
-                                MainActivity.getraenke.add(new Getraenk(name, preis,gruppe));
+                                MainActivity.getraenke.add(new Getraenk(name, preis,gruppe,0));
                                 getraenk = new Getraenk(name,preis,gruppe);
                                 writeGetraenke();
                             } catch (Exception ex) {
@@ -548,13 +593,25 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 String getraenkeName = dataSnapshot.child("name").getValue().toString();
                 double getraenkePreis = Double.parseDouble(dataSnapshot.child("preis").getValue().toString());
                 String gruppenName = dataSnapshot.child("gruppenName").getValue().toString();
+                int anzahl = 0;
+                try {
+                    anzahl = Integer.parseInt(dataSnapshot.child("anzahl").getValue().toString());
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+
+
 
                 if(gruppenName.equals(MainActivity.gruppe)) {
 
-                    if (MainActivity.getraenke.contains(new Getraenk(getraenkeName, getraenkePreis, gruppenName))) {
+
+                    if (MainActivity.getraenke.contains(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl))) {
 
                     } else {
-                        MainActivity.getraenke.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName));
+                        MainActivity.getraenke.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl));
                     }
                 }
                 else
