@@ -121,6 +121,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         txt4.setText(String.valueOf(MainActivity.personen.get(pos).telefonNr));
         this.position = pos;
         spinner.setOnItemSelectedListener(this);
+        spinner.setPrompt("Pick your drink");
 
         if (MainActivity.personen.get(pos).guthaben < 5) {
             txt2.setBackgroundColor(Color.RED);
@@ -219,11 +220,10 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                                     try {
                                         double guthabenerweitern = Double.parseDouble(guthaben.getText().toString());
-
                                         double gut = MainActivity.personen.get(position).guthaben + guthabenerweitern;
 
-
                                         Person person = MainActivity.personen.get(position);
+
                                         person.guthaben = gut;
                                         MainActivity.items.remove(position);
                                         MainActivity.personen.remove(position);
@@ -234,15 +234,12 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                                         MainActivity.myPersonenRef.setValue(person);
 
-                                        txt2.setText(gut + " €");
+                                        txt2.setText(gut+" €");
 
                                         Toast.makeText(v.getContext(), "Neues Guthaben: " + gut, Toast.LENGTH_SHORT).show();
                                     } catch (Exception ex) {
-                                        Toast.makeText(v.getContext(), "Fehler", Toast.LENGTH_SHORT).show();
-
+                                        Toast.makeText(v.getContext(), "Fehler beim hinzufügen des Guthaben", Toast.LENGTH_SHORT).show();
                                     }
-
-
                                 }
                             }
                     );
@@ -263,22 +260,15 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                             @SuppressLint("MissingPermission")
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-
-                                smstxt = view.findViewById(R.id.smsText);
-
-
                                 String smstext = "";
+                                smstxt = view.findViewById(R.id.smsText);
                                 try {
                                     smstext = smstxt.getText().toString();
                                 } catch (Exception ex) {
                                     Toast.makeText(v.getContext(), "Fehler beim Formatieren", Toast.LENGTH_SHORT).show();
                                 }
-
-
                                 SmsManager sms = SmsManager.getDefault();
 
-
-                                Context context;
                                 Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
                                 try {
@@ -299,34 +289,22 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                 {
                                     Toast.makeText(getContext(),"Fehler beim Senden der SMS",Toast.LENGTH_SHORT).show();
                                 }
-
-
-
-
-
-
                             }
                         }
                 );
                 alert2.setNegativeButton("Zurück", null);
                 alert2.show();
-
                 break;
         }
-
     }
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
         getraenk = MainActivity.getraenke.get(position);
-
     }
-
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-
     }
 
 }

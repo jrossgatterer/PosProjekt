@@ -22,6 +22,10 @@
         android:id="@+id/menu_aktualisieren"
         android:title="Aktualisieren" />
 
+    <item
+        android:id="@+id/preferences"
+        android:title="Einstellungen" />
+
 
 
 </menu>

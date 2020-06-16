@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
     static Person person = new Person();
     static Getraenk getraenk = new Getraenk();
+    static Gruppe neueGruppe = new Gruppe();
     static long zaehlerPerson;
     long zaehlerGruppe;
     long zaehlerGetraenke;
@@ -64,13 +65,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
   static LocationManager lm;
   Location location;
 
-
+    static DatabaseReference myPersonenRef;
+    DatabaseReference myGruppenRef;
+    DatabaseReference myGetraenkeRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
         myPersonenRef.addValueEventListener(new ValueEventListener() {
@@ -80,15 +82,12 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 {
                     zaehlerPerson = (dataSnapshot.getChildrenCount());
                 }
-
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-
 
         myGruppenRef = FirebaseDatabase.getInstance().getReference().child("Gruppen");
         myGruppenRef.addValueEventListener(new ValueEventListener() {
@@ -104,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     myGruppenRef.addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-
 
                             String gruppenName = dataSnapshot.child("guppenName").getValue().toString();
                             String gruppenPw = dataSnapshot.child("gruppenPasswort").getValue().toString();
@@ -135,14 +133,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             }
         });
 
-
         myGetraenkeRef = FirebaseDatabase.getInstance().getReference().child("Getraenke");
         myGetraenkeRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists())
                 {
-                    zaehlerGetraenke = (dataSnapshot.getChildrenCount());
+                    zaehlerGetraenke = dataSnapshot.getChildrenCount();
                 }
             }
 
@@ -178,7 +175,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},MY_Permission);
 
             }
-
         }
         
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
@@ -188,11 +184,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         location = lm.getLastKnownLocation(lm.NETWORK_PROVIDER);
 
-        onLocationChanged(location);
-
+        //onLocationChanged(location);
     }
-
-
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permission[], int[] grantResults)
@@ -205,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 {
                     Toast.makeText(this, "Zugang gewährt",Toast.LENGTH_SHORT).show();
                 }
-
             }
         }
     }
@@ -313,9 +305,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         EditText getraenkename = view5.findViewById(R.id.getraenke_name);
                         EditText getraenkepreis = view5.findViewById(R.id.getraenke_preis);
                         String name = getraenkename.getText().toString();
-
-
-
 
                         try {
                                 String getrPreis = getraenkepreis.getText().toString();
@@ -440,7 +429,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                     }
                                 }
 
-
                             }
 
 
@@ -452,21 +440,12 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             }
                             else
                             {
+                                    neueGruppe = new Gruppe(MainActivity.gruppe,MainActivity.gruppenpasswort);
+                                    writeGruppen();
 
+                                    Toast.makeText(view8.getContext(),"Neue Gruppe wurde erstellt",Toast.LENGTH_SHORT).show();
 
-                                    for (int i = 0; i < gruppen.size(); i++) {
-
-
-                                            writeGruppen();
-                                            Toast.makeText(view8.getContext(),"Neue Gruppe wurde erstellt",Toast.LENGTH_SHORT).show();
-
-
-
-                                }
                             }
-
-
-
                         }
                         catch(Exception ex)
                         {
@@ -478,6 +457,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 );
                 alert8.setNegativeButton("Zurück",null);
                 alert8.show();
+            case R.id.preferences:
+
+
+
                 break;
 
 
@@ -492,10 +475,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         int id = v.getId();
     }
-    DatabaseReference myUserRef;
-    static DatabaseReference myPersonenRef;
-    DatabaseReference myGruppenRef;
-    DatabaseReference myGetraenkeRef;
 
 
     public void writePersonen()
@@ -534,11 +513,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             masterFragment.adapter.notifyDataSetChanged();
                         }
                     }
-                    else
-                    {
-
-                    }
-
 
                 }
                 @Override
@@ -550,17 +524,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         }
     }
 
-
-
     public void writeGruppen()
     {
-        Gruppe gr = new Gruppe(gruppe,gruppenpasswort);
-        myGruppenRef.getParent().child(String.valueOf(zaehlerGruppe+1)).setValue(gr);
+        myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
     }
 
     public void writeGetraenke()
     {
-        myGetraenkeRef.getParent().child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
+        myGetraenkeRef.child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
     }
 
     public void loadGetaenke()
@@ -590,7 +561,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 {
                     Log.d("MainActivity","Andere Gruppe");
                 }
-
             }
 
             @Override
