@@ -100,34 +100,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     zaehlerGruppe = (dataSnapshot.getChildrenCount());
                 }
 
-                for (int i = 1; i <= zaehlerGruppe; i++) {
-                    myGruppenRef = FirebaseDatabase.getInstance().getReference().child("Gruppen").child(String.valueOf(i));
-                    myGruppenRef.addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
-                            String gruppenName = dataSnapshot.child("guppenName").getValue().toString();
-                            String gruppenPw = dataSnapshot.child("gruppenPasswort").getValue().toString();
-                            Gruppe gr = new Gruppe(gruppenName,gruppenPw);
-
-                            if(gruppen.contains(gr))
-                            {
-                                Log.d("MainActivity9090", "contains");
-                            }
-                            else
-                            {
-                                gruppen.add(gr);
-                                Log.d("MainActivity9090", gr.guppenName);
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                        }
-                    });
-                }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -186,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         location = lm.getLastKnownLocation(lm.NETWORK_PROVIDER);
 
-        onLocationChanged(location);
+        //onLocationChanged(location);
     }
 
     @Override
@@ -282,11 +255,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
         }
                 break;
-
-
-
-
-
 
 
             case R.id.menu_statistiken:
@@ -438,6 +406,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             case R.id.menu_admin:
                 AlertDialog.Builder alert8 = new AlertDialog.Builder(this);
                 alert8.setTitle("Admin");
+                loadGruppen();
                 final View view8 = getLayoutInflater().inflate(R.layout.loginandregistrierenadmin,null);
                 alert8.setView(view8);
                 alert8.setPositiveButton("Login als Admin",new DialogInterface.OnClickListener() {
@@ -538,8 +507,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                     String email = dataSnapshot.child("emailAdresse").getValue().toString();
                     Double guthaben = Double.parseDouble(dataSnapshot.child("guthaben").getValue().toString());
-                    String vorname = dataSnapshot.child("nachname").getValue().toString();
-                    String nachname = dataSnapshot.child("vorname").getValue().toString();
+                    String vorname = dataSnapshot.child("vorname").getValue().toString();
+                    String nachname = dataSnapshot.child("nachname").getValue().toString();
                     long telefonNr = Long.parseLong(dataSnapshot.child("telefonNr").getValue().toString());
                     String gruppe = dataSnapshot.child("gruppenName").getValue().toString();
 
@@ -572,6 +541,37 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     public void writeGruppen()
     {
         myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
+    }
+    public void loadGruppen()
+    {
+        for (int i = 1; i <= zaehlerGruppe; i++) {
+            myGruppenRef = FirebaseDatabase.getInstance().getReference().child("Gruppen").child(String.valueOf(i));
+            myGruppenRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
+                    String gruppenName = dataSnapshot.child("guppenName").getValue().toString();
+                    String gruppenPw = dataSnapshot.child("gruppenPasswort").getValue().toString();
+                    Gruppe gr = new Gruppe(gruppenName,gruppenPw);
+
+                    if(gruppen.contains(gr))
+                    {
+                        Log.d("MainActivity9090", "contains");
+                    }
+                    else
+                    {
+                        gruppen.add(gr);
+                        Log.d("MainActivity9090", gr.guppenName);
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+            });
+        }
     }
 
     public void writeGetraenke()

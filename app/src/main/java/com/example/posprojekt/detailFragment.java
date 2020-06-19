@@ -240,7 +240,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                         MainActivity.items.remove(position);
                                         MainActivity.personen.remove(position);
                                         MainActivity.personen.add(person);
-                                        MainActivity.items.add(person.toString());
 
                                         position = MainActivity.personen.indexOf(person);
 
