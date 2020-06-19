@@ -7,9 +7,9 @@
         android:id="@+id/textperson"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:fontFamily="monospace"
-        android:text="TextView"
-        android:backgroundTint="@color/color2"
         android:background="@color/color2"
-        />
+        android:backgroundTint="@color/color2"
+        android:textSize="27dp" />
+
+
 </LinearLayout>

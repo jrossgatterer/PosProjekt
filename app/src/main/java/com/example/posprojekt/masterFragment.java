@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -72,13 +73,15 @@ public class masterFragment extends Fragment {
 
     @Override
     public void onStart() {
+        int layout = R.id.textperson;
         super.onStart();
        adapter =
                 new ArrayAdapter<>(
-                        getActivity(),
-                        android.R.layout.simple_list_item_1,
+                        this.getContext(),
+                        R.layout.startlayoutperson,layout,
                         MainActivity.items
                 );
+
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
     }

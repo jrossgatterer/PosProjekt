@@ -375,9 +375,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                             MainActivity.gruppe = user.getText().toString();
 
-
-
-
                                 for (int i = 0; i < gruppen.size(); i++) {
 
                                     if(gruppen.get(i).guppenName.equals(MainActivity.gruppe))
