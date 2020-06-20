@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<string-array name="background">
+    <item name ="White">Weiß</item>
+  <item name = "Red">Rot</item>
+    <item name = "Black">Schwarz</item>
+</string-array>
+    <string-array name="background_values">
+        <item name = "White">#ffffff</item>
+        <item name = "Red">#ff0000</item>
+        <item name = "Black">#000000</item>
+    </string-array>
+    </resources>

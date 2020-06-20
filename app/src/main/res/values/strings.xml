@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">posprojekt</string>
+    <string name="key_color">backgroundColor</string>
     <color name="background">#2e2e2e</color>
     <color name="color2">#f3e03b</color>
     <color name="color3">#ffffff</color>

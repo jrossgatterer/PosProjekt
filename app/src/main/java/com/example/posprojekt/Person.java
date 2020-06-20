@@ -30,7 +30,6 @@ public class Person {
         return this.vorname+""+this.nachname;
     }
 
-
     public String getVorname() {
         return vorname;
     }

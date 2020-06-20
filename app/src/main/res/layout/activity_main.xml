@@ -6,7 +6,8 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".MainActivity"
-    android:background="@mipmap/backgroundino">
+    android:background="@mipmap/backgroundino"
+    android:id="@+id/changeColor">
 
     <fragment
         android:id="@+id/fragmentmaster"

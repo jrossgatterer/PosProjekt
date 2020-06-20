@@ -69,6 +69,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     Button guthabenhinzufuegen;
     Button sms;
 
+    View fragbackgroundLayout;
     int position;
     Getraenk getraenk;
 

@@ -5,7 +5,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -17,6 +19,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -26,6 +29,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -39,6 +43,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener, LocationListener {
 
     private static final int MY_Permission = 0;
+    private static final int RQ_PREFERENCES = 1;
     static ArrayList<Person> personen = new ArrayList<>();//Personen der Liste
     static ArrayList<String> items = new ArrayList<>();
     static ArrayList<Getraenk> getraenke = new ArrayList<>();
@@ -61,7 +66,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static List<Gruppe> gruppen = new ArrayList<>();
 
     static String gruppenpasswort;
-
+  View backgroundLayout;
+  View fragbackgroundLayout;
   static double lat;
   static double lon;
   static LocationManager lm;
@@ -71,11 +77,22 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     DatabaseReference myGruppenRef;
     DatabaseReference myGetraenkeRef;
 
+    private SharedPreferences prefs;
+    private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
+
+        backgroundLayout = findViewById(R.id.changeColor);
+
+        String storeColor = prefs.getString(getString(R.string.key_color),"#FFFFFF");
+        backgroundLayout.setBackgroundColor(Color.parseColor(storeColor));
+        
         myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
         myPersonenRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -205,22 +222,21 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         int id = item.getItemId();
         final int sizebefore = personen.size();
-        switch (id)
-        {
+        switch (id) {
             case R.id.menu_newPerson:
-                if(admin == true) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(this);
-                alert.setTitle("Neue Person");
-                final View view = getLayoutInflater().inflate(R.layout.newperson,null);
-                alert.setView(view);
-                alert.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                EditText vorname = view.findViewById(R.id.vorname);
-                                EditText nachname = view.findViewById(R.id.nachname);
-                                EditText guthanen = view.findViewById(R.id.guthaben);
-                                EditText email = view.findViewById(R.id.email);
-                                EditText telnr = view.findViewById(R.id.number);
+                if (admin == true) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(this);
+                    alert.setTitle("Neue Person");
+                    final View view = getLayoutInflater().inflate(R.layout.newperson, null);
+                    alert.setView(view);
+                    alert.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    EditText vorname = view.findViewById(R.id.vorname);
+                                    EditText nachname = view.findViewById(R.id.nachname);
+                                    EditText guthanen = view.findViewById(R.id.guthaben);
+                                    EditText email = view.findViewById(R.id.email);
+                                    EditText telnr = view.findViewById(R.id.number);
 
                                     try {
                                         String vorn = vorname.getText().toString();
@@ -228,7 +244,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         double guthab = Double.parseDouble(guthanen.getText().toString());
                                         String emai = email.getText().toString();
                                         long teln = Long.parseLong(telnr.getText().toString());
-                                        Person x = new Person(vorn, nach, guthab, emai, teln,gruppe);
+                                        Person x = new Person(vorn, nach, guthab, emai, teln, gruppe);
                                         items.add(x.toString());
                                         personen.add(x);
                                         MainActivity.person = x;
@@ -246,14 +262,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                 }
 
 
-                        }
-                );
-                alert.setNegativeButton("Zurück",null);
-                alert.show();
-        }else
-        {
-            Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
-        }
+                            }
+                    );
+                    alert.setNegativeButton("Zurück", null);
+                    alert.show();
+                } else {
+                    Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
 
@@ -262,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                 AlertDialog.Builder alert3 = new AlertDialog.Builder(this);
                 alert3.setTitle("Statistik");
-                final View view3 = getLayoutInflater().inflate(R.layout.statistiken,null);
+                final View view3 = getLayoutInflater().inflate(R.layout.statistiken, null);
                 alert3.setView(view3);
 
                 ListView listView = view3.findViewById(R.id.listview_statistiken);
@@ -278,125 +293,107 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 ArrayAdapter<String> adapter;
                 adapter =
                         new ArrayAdapter<>(
-                               this,
+                                this,
                                 android.R.layout.simple_list_item_1,
                                 listStatistik
                         );
                 listView.setAdapter(adapter);
                 adapter.notifyDataSetChanged();
 
-                alert3.setNegativeButton("Okay",null);
+                alert3.setNegativeButton("Okay", null);
                 alert3.show();
                 break;
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
             case R.id.menu_newGetraenk:
-                if(admin == true) {
-                AlertDialog.Builder alert5 = new AlertDialog.Builder(this);
-                alert5.setTitle("Neues Getränk");
-                final View view5 = getLayoutInflater().inflate(R.layout.getraenke_hinzufuegen,null);
-                alert5.setView(view5);
-                alert5.setPositiveButton("Hinzufügen",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText getraenkename = view5.findViewById(R.id.getraenke_name);
-                        EditText getraenkepreis = view5.findViewById(R.id.getraenke_preis);
-                        String name = getraenkename.getText().toString();
+                if (admin == true) {
+                    AlertDialog.Builder alert5 = new AlertDialog.Builder(this);
+                    alert5.setTitle("Neues Getränk");
+                    final View view5 = getLayoutInflater().inflate(R.layout.getraenke_hinzufuegen, null);
+                    alert5.setView(view5);
+                    alert5.setPositiveButton("Hinzufügen", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    EditText getraenkename = view5.findViewById(R.id.getraenke_name);
+                                    EditText getraenkepreis = view5.findViewById(R.id.getraenke_preis);
+                                    String name = getraenkename.getText().toString();
 
-                        try {
-                                String getrPreis = getraenkepreis.getText().toString();
-                                String[] arr = getrPreis.split("");
+                                    try {
+                                        String getrPreis = getraenkepreis.getText().toString();
+                                        String[] arr = getrPreis.split("");
 
-                                for (int i = 0; i < arr.length; i++) {
+                                        for (int i = 0; i < arr.length; i++) {
 
-                                    if (arr[i].equals(",")) {
-                                        arr[i] = ".";
+                                            if (arr[i].equals(",")) {
+                                                arr[i] = ".";
+                                            }
+
+                                        }
+
+
+                                        getrPreis = "";
+
+                                        for (int i = 0; i < arr.length; i++) {
+
+                                            getrPreis += arr[i];
+
+                                        }
+
+
+                                        Double preis = Double.parseDouble(getrPreis);
+                                        MainActivity.getraenke.add(new Getraenk(name, preis, gruppe, 0));
+                                        getraenk = new Getraenk(name, preis, gruppe);
+                                        writeGetraenke();
+                                    } catch (Exception ex) {
+                                        Toast.makeText(view5.getContext(), "Hinzufügen Fehlgeschlagen", Toast.LENGTH_SHORT).show();
                                     }
 
                                 }
-
-
-                                getrPreis = "";
-
-                                for (int i = 0; i < arr.length; i++) {
-
-                                    getrPreis += arr[i];
-
-                                }
-
-
-                                Double preis = Double.parseDouble(getrPreis);
-                                MainActivity.getraenke.add(new Getraenk(name, preis,gruppe,0));
-                                getraenk = new Getraenk(name,preis,gruppe);
-                                writeGetraenke();
-                            } catch (Exception ex) {
-                                Toast.makeText(view5.getContext(), "Hinzufügen Fehlgeschlagen", Toast.LENGTH_SHORT).show();
                             }
+                    );
+                    alert5.setNegativeButton("Zurück", null);
+                    alert5.show();
 
-                    }}
-                );
-                alert5.setNegativeButton("Zurück",null);
-                alert5.show();
-
-                }else
-                    {
-                        Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
-                    }
+                } else {
+                    Toast.makeText(this, "Sie haben keine Berechtigungen um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
+                }
                 break;
 
             case R.id.menu_login:
 
                 AlertDialog.Builder alert7 = new AlertDialog.Builder(this);
                 alert7.setTitle("Login");
-                final View view7 = getLayoutInflater().inflate(R.layout.loginandregistrieren,null);
+                final View view7 = getLayoutInflater().inflate(R.layout.loginandregistrieren, null);
                 alert7.setView(view7);
-                alert7.setPositiveButton("Login",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        EditText user = view7.findViewById(R.id.login_username);
+                alert7.setPositiveButton("Login", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                EditText user = view7.findViewById(R.id.login_username);
 
-                        try {
+                                try {
 
-                            MainActivity.gruppe = user.getText().toString();
+                                    MainActivity.gruppe = user.getText().toString();
 
-                                for (int i = 0; i < gruppen.size(); i++) {
+                                    for (int i = 0; i < gruppen.size(); i++) {
 
-                                    if(gruppen.get(i).guppenName.equals(MainActivity.gruppe))
-                                    {
-                                        MainActivity.admin = false;
-                                        Toast.makeText(view7.getContext(),"Erfolgreiche anmeldung",Toast.LENGTH_SHORT).show();
-                                        users.add(new User(email, passwort, gruppe,false));
-                                        loadPersonen();
-                                        loadGetaenke();
+                                        if (gruppen.get(i).guppenName.equals(MainActivity.gruppe)) {
+                                            MainActivity.admin = false;
+                                            Toast.makeText(view7.getContext(), "Erfolgreiche anmeldung", Toast.LENGTH_SHORT).show();
+                                            users.add(new User(email, passwort, gruppe, false));
+                                            loadPersonen();
+                                            loadGetaenke();
+                                        }
+
                                     }
 
+                                } catch (Exception ex) {
+                                    Toast.makeText(view7.getContext(), "Registrieren Fehlgeschlagen", Toast.LENGTH_SHORT).show();
+                                }
+
                             }
-
                         }
-                        catch(Exception ex)
-                        {
-                            Toast.makeText(view7.getContext(), "Registrieren Fehlgeschlagen",Toast.LENGTH_SHORT).show();
-                        }
-
-                    }}
                 );
-                alert7.setNegativeButton("Zurück",null);
+                alert7.setNegativeButton("Zurück", null);
                 alert7.show();
                 break;
 
@@ -404,81 +401,86 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 AlertDialog.Builder alert8 = new AlertDialog.Builder(this);
                 alert8.setTitle("Admin");
                 loadGruppen();
-                final View view8 = getLayoutInflater().inflate(R.layout.loginandregistrierenadmin,null);
+                final View view8 = getLayoutInflater().inflate(R.layout.loginandregistrierenadmin, null);
                 alert8.setView(view8);
-                alert8.setPositiveButton("Login als Admin",new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                alert8.setPositiveButton("Login als Admin", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                        EditText grupp = view8.findViewById(R.id.admin_Gruppe);
-                        Switch sw = view8.findViewById(R.id.admin_switch);
-                        EditText grupppas = view8.findViewById(R.id.admin_grupppasswort);
-                        try {
+                                EditText grupp = view8.findViewById(R.id.admin_Gruppe);
+                                Switch sw = view8.findViewById(R.id.admin_switch);
+                                EditText grupppas = view8.findViewById(R.id.admin_grupppasswort);
+                                try {
 
-                            MainActivity.gruppe = grupp.getText().toString();
-                            MainActivity.admin = sw.isChecked();
-                            MainActivity.gruppenpasswort = grupppas.getText().toString();
-
-
-                            User us = new User(MainActivity.email,MainActivity.passwort, MainActivity.gruppe,admin);
+                                    MainActivity.gruppe = grupp.getText().toString();
+                                    MainActivity.admin = sw.isChecked();
+                                    MainActivity.gruppenpasswort = grupppas.getText().toString();
 
 
-                            Gruppe gr = new Gruppe("","");
+                                    User us = new User(MainActivity.email, MainActivity.passwort, MainActivity.gruppe, admin);
 
-                            for (int i = 0; i < gruppen.size(); i++) {
 
-                                if(MainActivity.gruppe.equals(gruppen.get(i).guppenName))
-                                {
+                                    Gruppe gr = new Gruppe("", "");
 
-                                    if(MainActivity.gruppenpasswort.equals(gruppen.get(i).gruppenPasswort))
-                                    {
-                                        gr = gruppen.get(i);
+                                    for (int i = 0; i < gruppen.size(); i++) {
+
+                                        if (MainActivity.gruppe.equals(gruppen.get(i).guppenName)) {
+
+                                            if (MainActivity.gruppenpasswort.equals(gruppen.get(i).gruppenPasswort)) {
+                                                gr = gruppen.get(i);
+                                            } else {
+
+                                                Toast.makeText(view8.getContext(), "Falsches Passwort für die Gruppe", Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+
                                     }
-                                    else {
 
-                                        Toast.makeText(view8.getContext(), "Falsches Passwort für die Gruppe", Toast.LENGTH_SHORT).show();
+
+                                    if ((gr.guppenName.equals(grupp.getText().toString()) && (gr.gruppenPasswort.equals(grupppas.getText().toString())))) {
+                                        loadPersonen();
+                                        loadGetaenke();
+                                        Toast.makeText(view8.getContext(), "Als Admin angemeldet", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        neueGruppe = new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort);
+                                        writeGruppen();
+
+                                        Toast.makeText(view8.getContext(), "Neue Gruppe wurde erstellt", Toast.LENGTH_SHORT).show();
+
                                     }
+                                } catch (Exception ex) {
+                                    Toast.makeText(view8.getContext(), "Fehlgeschlagen", Toast.LENGTH_SHORT).show();
                                 }
 
-                            }
-
-
-                            if((gr.guppenName.equals(grupp.getText().toString()) && (gr.gruppenPasswort.equals(grupppas.getText().toString()))))
-                            {
-                                    loadPersonen();
-                                    loadGetaenke();
-                                Toast.makeText(view8.getContext(),"Als Admin angemeldet",Toast.LENGTH_SHORT).show();
-                            }
-                            else
-                            {
-                                    neueGruppe = new Gruppe(MainActivity.gruppe,MainActivity.gruppenpasswort);
-                                    writeGruppen();
-
-                                    Toast.makeText(view8.getContext(),"Neue Gruppe wurde erstellt",Toast.LENGTH_SHORT).show();
 
                             }
                         }
-                        catch(Exception ex)
-                        {
-                            Toast.makeText(view8.getContext(), "Fehlgeschlagen",Toast.LENGTH_SHORT).show();
-                        }
-
-
-                    }}
                 );
-                alert8.setNegativeButton("Zurück",null);
+                alert8.setNegativeButton("Zurück", null);
                 alert8.show();
-            case R.id.preferences:
-
-
 
                 break;
 
-
+            case R.id.preferences:
+                if(admin==true || admin!=true) {
+                    finish();
+                    Intent intent = new Intent(this, MySettingsActivity.class);
+                    startActivityForResult(intent, RQ_PREFERENCES);
+                }
+                else
+                {
+                    Toast.makeText(this, "Sie haben keine Berechtigung die Einstellungen zu ändern!",Toast.LENGTH_SHORT).show();
+                }
+                break;
 
         }
 
         return true;
+    }
+
+    public void showPrefs(View view)
+    {
+
     }
 
     @Override
@@ -537,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     public void writeGruppen()
     {
-        myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
+        myGruppenRef.getParent().child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
     }
     public void loadGruppen()
     {
