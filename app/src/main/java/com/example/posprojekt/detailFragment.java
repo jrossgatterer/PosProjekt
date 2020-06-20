@@ -41,6 +41,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.security.Provider;
@@ -69,9 +70,15 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     Button guthabenhinzufuegen;
     Button sms;
 
+    FirebaseDatabaseHelper firebaseDatabaseHelper = new FirebaseDatabaseHelper();
+
     View fragbackgroundLayout;
     int position;
     Getraenk getraenk;
+
+    DatabaseReference myPersonenRef;
+
+
 
     protected LocationManager locationManager;
     Location location;
@@ -86,6 +93,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         loeschen.setOnClickListener(this);
         guthabenhinzufuegen.setOnClickListener(this);
         sms.setOnClickListener(this);
+        myPersonenRef = FirebaseDatabase.getInstance().getReference("Personen");
+
         return view;
 
     }
@@ -136,7 +145,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     public void onClick(final View v) {
 
         int id = v.getId();
-
+        double gut = 0;
         switch (id) {
             case R.id.getraenkhinzufuegen:
                 //Spinner auswerten, Getränk hinzufügen und Geld abziehen
@@ -150,10 +159,9 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                         for (int i = 0; i < MainActivity.getraenke.size(); i++) {
 
-                            if(MainActivity.getraenke.get(i).getName().equals(name))
-                            {
+                            if (MainActivity.getraenke.get(i).getName().equals(name)) {
                                 int anzVorher = MainActivity.getraenke.get(i).getAnzahl();
-                                MainActivity.getraenke.get(i).setAnzahl(anzVorher+=1);
+                                MainActivity.getraenke.get(i).setAnzahl(anzVorher += 1);
                             }
 
 
@@ -202,12 +210,10 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                     MainActivity.personen.remove(position);
                     MainActivity.items.remove(position);
 
-                    MainActivity.myPersonenRef.removeValue(new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                                Toast.makeText(getContext(), "Geloescht",Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                    //Firebase
+                    MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
+                    Toast.makeText(getContext(), "Geloescht", Toast.LENGTH_SHORT).show();
+
 
                     Intent intent3 = new Intent(v.getContext(), MainActivity.class);
                     startActivity(intent3);
@@ -241,12 +247,15 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                         MainActivity.items.remove(position);
                                         MainActivity.personen.remove(position);
                                         MainActivity.personen.add(person);
+                                        MainActivity.items.add(person.toString());
+
+                                        //Firebase
+                                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
+                                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(person);
 
                                         position = MainActivity.personen.indexOf(person);
 
-                                        MainActivity.myPersonenRef.setValue(person);
-
-                                        txt2.setText(gut+" €");
+                                        txt2.setText(gut + " €");
 
                                         Toast.makeText(v.getContext(), "Neues Guthaben: " + gut, Toast.LENGTH_SHORT).show();
                                     } catch (Exception ex) {
@@ -284,9 +293,9 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                 Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
                                 try {
-                                    List<Address> list = geocoder.getFromLocation(MainActivity.lat, MainActivity.lon,1);
-                                    Toast.makeText(getContext(),list.get(0).getLocality(),Toast.LENGTH_SHORT).show();
-                                    smstext+= "\n"+list.get(0).getLocality();
+                                    List<Address> list = geocoder.getFromLocation(MainActivity.lat, MainActivity.lon, 1);
+                                    Toast.makeText(getContext(), list.get(0).getLocality(), Toast.LENGTH_SHORT).show();
+                                    smstext += "\n" + list.get(0).getLocality();
 
                                 } catch (IOException e) {
                                     Toast.makeText(getContext(), "Fehler beim finden des Standorts", Toast.LENGTH_SHORT).show();
@@ -294,12 +303,10 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                                 long telnr = MainActivity.personen.get(position).telefonNr;
                                 try {
-                                    sms.sendTextMessage(String.valueOf(telnr),null, smstext, null,null);
-                                    Toast.makeText(getContext(),"SMS mit Standort wurde gesendet",Toast.LENGTH_SHORT).show();
-                                }
-                                catch(Exception ex)
-                                {
-                                    Toast.makeText(getContext(),"Fehler beim Senden der SMS",Toast.LENGTH_SHORT).show();
+                                    sms.sendTextMessage(String.valueOf(telnr), null, smstext, null, null);
+                                    Toast.makeText(getContext(), "SMS mit Standort wurde gesendet", Toast.LENGTH_SHORT).show();
+                                } catch (Exception ex) {
+                                    Toast.makeText(getContext(), "Fehler beim Senden der SMS", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -318,5 +325,4 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }
-
 }
