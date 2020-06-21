@@ -206,17 +206,13 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
             case R.id.loeschen:
                 if (MainActivity.admin == true) {
 
+                    Person person = MainActivity.personen.get(position);
                     MainActivity.personen.remove(position);
                     MainActivity.items.remove(position);
-
+                    person.setGruppenName("Deleted Persons");
                     MainActivity.personCounter.remove(position);
 
-                    //Firebase
-                    MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
-                    MainActivity.myPersonenRef.getParent().child(String.valueOf(position+1)).setValue(null);
-
                     Toast.makeText(getContext(), "Geloescht", Toast.LENGTH_SHORT).show();
-
 
                     Intent intent3 = new Intent(v.getContext(), MainActivity.class);
                     startActivity(intent3);
@@ -251,11 +247,12 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                         MainActivity.personen.remove(position);
                                         MainActivity.personen.add(person);
 
+
                                         MainActivity.personCounter.remove(position);
                                         MainActivity.personCounter.add(person);
 
                                         //Firebase
-                                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
+
                                         MainActivity.myPersonenRef.getParent().child(String.valueOf(position+1)).setValue(person);
 
                                         position = MainActivity.personen.indexOf(person);

@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static Person person = null;
     static Getraenk getraenk = null;
     static Gruppe neueGruppe = null;
+    static boolean personVorhanden;
+    static boolean getraenkVorhanden;
     static long zaehlerPerson;
     long zaehlerGruppe;
     long zaehlerGetraenke;
@@ -256,33 +258,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         masterFragment.listView.setAdapter(masterFragment.adapter);
                                         masterFragment.adapter.notifyDataSetChanged();
 
-                                        //Wenn keine Personen vorhanden sind und Personen hinzufügt geht es:
-                                        // Aber wenn Personen vorhanden sind und App neugestartet wird werden Personen falsch gespeichert...
-                                        /*
-                                        if(personCounter!=null)
-                                        {
-                                            writePersonen();
-                                        }
-                                        else
-                                        {
-                                            //Egal ob man writePersonen() oder writeFirstPersonen() nimmt
-                                            writeFirstPersonen();
-                                        }
-                                        */
-                                        //Wenn Personen vorhanden sind geht hinzufügen auch bei Neustart:
-                                        // Aber wenn keine Person vorhanden ist werden Person automatisch falsch gespeichert...
-
-                                        if(personCounter!=null)
+                                        if(MainActivity.personVorhanden==true)
                                         {
                                             writeFirstPersonen();
                                         }
                                         else
                                         {
-                                            //Egal ob man writePersonen() oder writeFirstPersonen() nimmt
                                             writePersonen();
                                         }
-
-                                        //Dasselbe gilt für Getraenke hinzufügen!
 
                                         personCounter.add(x);
                                         Log.d("Items:",String.valueOf(items.size()));
@@ -372,17 +355,17 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                                         }
 
-
                                         Double preis = Double.parseDouble(getrPreis);
                                         MainActivity.getraenke.add(new Getraenk(name, preis, gruppe, 0));
                                         getraenk = new Getraenk(name, preis, gruppe);
-                                        if(getaenkCounter!=null) {
-                                            writeGetraenke();
+                                        if(MainActivity.getraenkVorhanden==true) {
+                                            writeFirstGetraenke();
                                         }
                                         else
                                         {
-                                            writeFirstGetraenke();
+                                            writeGetraenke();
                                         }
+
                                         MainActivity.getaenkCounter.add(getraenk);
                                     } catch (Exception ex) {
                                         Toast.makeText(view5.getContext(), "Hinzufügen Fehlgeschlagen", Toast.LENGTH_SHORT).show();
@@ -557,6 +540,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     long telefonNr = Long.parseLong(dataSnapshot.child("telefonNr").getValue().toString());
                     String gruppe = dataSnapshot.child("gruppenName").getValue().toString();
 
+
                     if(MainActivity.gruppe.equals(gruppe))
                     {
 
@@ -568,8 +552,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             MainActivity.items.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe).toString());
                             MainActivity.personen.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe));
 
-                            //Position counter
-
                             MainActivity.personCounter.add(new Person(vorname, nachname, guthaben, email,telefonNr,gruppe));
 
                             masterFragment.adapter.notifyDataSetChanged();
@@ -577,7 +559,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             masterFragment.adapter.notifyDataSetChanged();
                         }
                     }
-
+                    if(zaehlerPerson==0)
+                    {
+                        personVorhanden=false;
+                    }
+                    else
+                    {
+                        personVorhanden=true;
+                    }
                 }
                 @Override
                 public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -676,11 +665,20 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 }
             }
 
+
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
+        }
+        if(zaehlerGetraenke==0)
+        {
+            getraenkVorhanden=false;
+        }
+        else
+        {
+            getraenkVorhanden=true;
         }
     }
 
