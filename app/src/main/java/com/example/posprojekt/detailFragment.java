@@ -70,15 +70,10 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     Button guthabenhinzufuegen;
     Button sms;
 
-    FirebaseDatabaseHelper firebaseDatabaseHelper = new FirebaseDatabaseHelper();
-
-    View fragbackgroundLayout;
     int position;
     Getraenk getraenk;
 
     DatabaseReference myPersonenRef;
-
-
 
     protected LocationManager locationManager;
     Location location;
@@ -179,9 +174,13 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         MainActivity.personen.add(person);
                         MainActivity.items.add(person.toString());
 
+                        MainActivity.personCounter.remove(position);
+                        MainActivity.personCounter.add(person);
+
                         position = MainActivity.personen.indexOf(person);
 
-                        MainActivity.myPersonenRef.setValue(person);
+                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
+                        MainActivity.myPersonenRef.getParent().child(String.valueOf(position+1)).setValue(person);
 
 
                         if (MainActivity.personen.get(position).guthaben <= 5) {
@@ -210,8 +209,12 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                     MainActivity.personen.remove(position);
                     MainActivity.items.remove(position);
 
+                    MainActivity.personCounter.remove(position);
+
                     //Firebase
                     MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
+                    MainActivity.myPersonenRef.getParent().child(String.valueOf(position+1)).setValue(null);
+
                     Toast.makeText(getContext(), "Geloescht", Toast.LENGTH_SHORT).show();
 
 
@@ -247,11 +250,13 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                         MainActivity.items.remove(position);
                                         MainActivity.personen.remove(position);
                                         MainActivity.personen.add(person);
-                                        MainActivity.items.add(person.toString());
+
+                                        MainActivity.personCounter.remove(position);
+                                        MainActivity.personCounter.add(person);
 
                                         //Firebase
                                         MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
-                                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(person);
+                                        MainActivity.myPersonenRef.getParent().child(String.valueOf(position+1)).setValue(person);
 
                                         position = MainActivity.personen.indexOf(person);
 

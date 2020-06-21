@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     private boolean showdetail;
     static int id = 0;
 
+    static List<Person> personCounter = new ArrayList<>();
+    static List<Getraenk> getaenkCounter = new ArrayList<>();
+
     static String email;//login -> durch diese kann jeder zugeordnet werden
     static String passwort;//login
     static String gruppe = null;
@@ -247,12 +250,42 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         Person x = new Person(vorn, nach, guthab, emai, teln, gruppe);
                                         items.add(x.toString());
                                         personen.add(x);
+
                                         MainActivity.person = x;
                                         masterFragment.adapter.notifyDataSetChanged();
                                         masterFragment.listView.setAdapter(masterFragment.adapter);
                                         masterFragment.adapter.notifyDataSetChanged();
 
-                                        writePersonen();
+                                        //Wenn keine Personen vorhanden sind und Personen hinzufügt geht es:
+                                        // Aber wenn Personen vorhanden sind und App neugestartet wird werden Personen falsch gespeichert...
+                                        /*
+                                        if(personCounter!=null)
+                                        {
+                                            writePersonen();
+                                        }
+                                        else
+                                        {
+                                            //Egal ob man writePersonen() oder writeFirstPersonen() nimmt
+                                            writeFirstPersonen();
+                                        }
+                                        */
+                                        //Wenn Personen vorhanden sind geht hinzufügen auch bei Neustart:
+                                        // Aber wenn keine Person vorhanden ist werden Person automatisch falsch gespeichert...
+
+                                        if(personCounter!=null)
+                                        {
+                                            writeFirstPersonen();
+                                        }
+                                        else
+                                        {
+                                            //Egal ob man writePersonen() oder writeFirstPersonen() nimmt
+                                            writePersonen();
+                                        }
+
+                                        //Dasselbe gilt für Getraenke hinzufügen!
+
+                                        personCounter.add(x);
+                                        Log.d("Items:",String.valueOf(items.size()));
 
                                     } catch (Exception io) {
                                         io.printStackTrace();
@@ -343,7 +376,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         Double preis = Double.parseDouble(getrPreis);
                                         MainActivity.getraenke.add(new Getraenk(name, preis, gruppe, 0));
                                         getraenk = new Getraenk(name, preis, gruppe);
-                                        writeGetraenke();
+                                        if(getaenkCounter!=null) {
+                                            writeGetraenke();
+                                        }
+                                        else
+                                        {
+                                            writeFirstGetraenke();
+                                        }
+                                        MainActivity.getaenkCounter.add(getraenk);
                                     } catch (Exception ex) {
                                         Toast.makeText(view5.getContext(), "Hinzufügen Fehlgeschlagen", Toast.LENGTH_SHORT).show();
                                     }
@@ -363,6 +403,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                 AlertDialog.Builder alert7 = new AlertDialog.Builder(this);
                 alert7.setTitle("Login");
+                loadGruppen();
                 final View view7 = getLayoutInflater().inflate(R.layout.loginandregistrieren, null);
                 alert7.setView(view7);
                 alert7.setPositiveButton("Login", new DialogInterface.OnClickListener() {
@@ -440,6 +481,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                     if ((gr.guppenName.equals(grupp.getText().toString()) && (gr.gruppenPasswort.equals(grupppas.getText().toString())))) {
                                         loadPersonen();
                                         loadGetaenke();
+
                                         Toast.makeText(view8.getContext(), "Als Admin angemeldet", Toast.LENGTH_SHORT).show();
                                     } else {
                                         neueGruppe = new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort);
@@ -494,6 +536,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     {
         myPersonenRef.child(String.valueOf(zaehlerPerson+1)).setValue(person);
     }
+    public void writeFirstPersonen()
+    {
+        myPersonenRef.getParent().child(String.valueOf(zaehlerPerson+1)).setValue(person);
+    }
 
     public void loadPersonen()
     {
@@ -521,6 +567,11 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         else {
                             MainActivity.items.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe).toString());
                             MainActivity.personen.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe));
+
+                            //Position counter
+
+                            MainActivity.personCounter.add(new Person(vorname, nachname, guthaben, email,telefonNr,gruppe));
+
                             masterFragment.adapter.notifyDataSetChanged();
                             masterFragment.listView.setAdapter(masterFragment.adapter);
                             masterFragment.adapter.notifyDataSetChanged();
@@ -577,6 +628,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     {
         myGetraenkeRef.child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
     }
+    public void writeFirstGetraenke()
+    {
+        myGetraenkeRef.getParent().child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
+    }
 
     public void loadGetaenke()
     {
@@ -611,6 +666,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                     } else {
                         MainActivity.getraenke.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl));
+
+                        MainActivity.getaenkCounter.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName, anzahl));
                     }
                 }
                 else
