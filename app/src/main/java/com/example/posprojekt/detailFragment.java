@@ -168,11 +168,10 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         MainActivity.personen.get(position).guthaben -= preis;
                         MainActivity.items.remove(position);
 
-
                         Person person = MainActivity.personen.get(position);
                         MainActivity.personen.remove(position);
                         MainActivity.personen.add(person);
-                        MainActivity.items.add(person.toString());
+                        //MainActivity.items.add(person.toString());
 
                         MainActivity.personCounter.remove(position);
                         MainActivity.personCounter.add(person);
@@ -214,6 +213,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                     Toast.makeText(getContext(), "Geloescht", Toast.LENGTH_SHORT).show();
 
+                    MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(person);
+
                     Intent intent3 = new Intent(v.getContext(), MainActivity.class);
                     startActivity(intent3);
                 } else {
@@ -246,14 +247,13 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                         MainActivity.items.remove(position);
                                         MainActivity.personen.remove(position);
                                         MainActivity.personen.add(person);
-
+                                        //MainActivity.items.add(person.toString());
 
                                         MainActivity.personCounter.remove(position);
                                         MainActivity.personCounter.add(person);
 
                                         //Firebase
-
-                                        MainActivity.myPersonenRef.getParent().child(String.valueOf(position+1)).setValue(person);
+                                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(person);
 
                                         position = MainActivity.personen.indexOf(person);
 

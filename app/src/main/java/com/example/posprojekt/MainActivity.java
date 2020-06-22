@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static Gruppe neueGruppe = null;
     static boolean personVorhanden;
     static boolean getraenkVorhanden;
+    static boolean gruppeVorhanden;
     static long zaehlerPerson;
     long zaehlerGruppe;
     long zaehlerGetraenke;
@@ -468,7 +469,15 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         Toast.makeText(view8.getContext(), "Als Admin angemeldet", Toast.LENGTH_SHORT).show();
                                     } else {
                                         neueGruppe = new Gruppe(MainActivity.gruppe, MainActivity.gruppenpasswort);
-                                        writeGruppen();
+                                        if(MainActivity.gruppeVorhanden==true)
+                                        {
+                                            writeFirstGruppen();
+                                        }
+                                        else
+                                        {
+                                            writeGruppen();
+                                        }
+
 
                                         Toast.makeText(view8.getContext(), "Neue Gruppe wurde erstellt", Toast.LENGTH_SHORT).show();
 
@@ -579,8 +588,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     public void writeGruppen()
     {
+        myGruppenRef.child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
+    }
+
+    public void writeFirstGruppen()
+    {
         myGruppenRef.getParent().child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
     }
+
     public void loadGruppen()
     {
         for (int i = 1; i <= zaehlerGruppe; i++) {
@@ -610,6 +625,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                 }
             });
+        }
+        if(zaehlerGruppe==0)
+        {
+            gruppeVorhanden=false;
+        }
+        else
+        {
+            gruppeVorhanden=true;
         }
     }
 
