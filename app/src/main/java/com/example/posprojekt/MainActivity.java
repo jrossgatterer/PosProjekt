@@ -572,6 +572,15 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     String gruppe = dataSnapshot.child("gruppenName").getValue().toString();
 
 
+
+
+                    if(MainActivity.einleseAnzahlList.size() <= zaehlerPerson)
+                    {
+                        MainActivity.einleseAnzahlList.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe));
+                    }
+
+
+
                     if(MainActivity.gruppe.equals(gruppe))
                     {
 
@@ -591,7 +600,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                         }
                     }
 
-                        MainActivity.einleseAnzahlList.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe));
+
 
                     if(zaehlerPerson==0)
                     {

@@ -129,9 +129,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
         spinner.setOnItemSelectedListener(this);
         spinner.setPrompt("Wähle dein Getränk");
 
-        if (MainActivity.personen.get(pos).guthaben < 5) {
-            txt2.setBackgroundColor(Color.RED);
-        }
 
     }
 
@@ -158,8 +155,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                 int anzVorher = MainActivity.getraenke.get(i).getAnzahl();
                                 MainActivity.getraenke.get(i).setAnzahl(anzVorher += 1);
                             }
-
-
                         }
 
                         Person persVorher = MainActivity.personen.get(position);
@@ -168,30 +163,33 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
                         String vorNach = MainActivity.personen.get(position).vorundnachname();
                         MainActivity.personen.get(position).guthaben -= preis;
-
+                        MainActivity.items.remove(position);
 
                         Person person = MainActivity.personen.get(position);
+
+
                         MainActivity.personen.remove(position);
                         MainActivity.personen.add(person);
-                        MainActivity.items.remove(position);
-                        MainActivity.items.get(position).replaceAll(persVorher.toString(), person.toString());
-                        //MainActivity.items.add(person.toString());
 
                         MainActivity.personCounter.remove(position);
-                        MainActivity.personCounter.add(person);
 
+                        int posi = 0;
 
                         for (int i = 0; i < MainActivity.einleseAnzahlList.size(); i++) {
 
-                            if(MainActivity.einleseAnzahlList.get(i).equals(persVorher))
+                            if(MainActivity.einleseAnzahlList.get(i).vorundnachname().equals(persVorher.vorundnachname()))
                             {
-                                position = i;
+                                posi = i;
+                                MainActivity.einleseAnzahlList.get(i).guthaben = person.getGuthaben();
+
                             }
+
 
                         }
 
 
-                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Personen").child(position+1+"");;
+
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Personen").child(posi+1+"");
 
                         try {
 
@@ -201,6 +199,9 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         } catch (Exception ex) {
 
                         }
+
+
+
                     }
 
                 } else {
@@ -219,18 +220,50 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
             case R.id.loeschen:
                 if (MainActivity.admin == true) {
 
+                    Person persVorher = MainActivity.personen.get(position);
                     Person person = MainActivity.personen.get(position);
                     MainActivity.personen.remove(position);
                     MainActivity.items.remove(position);
-                    person.setGruppenName("Deleted Persons");
+                    person.setGruppenName("DeletedPersons");
                     MainActivity.personCounter.remove(position);
 
                     Toast.makeText(getContext(), "Geloescht", Toast.LENGTH_SHORT).show();
 
-                    MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(person);
+
+
+                    int posi = 0;
+
+                    for (int i = 0; i < MainActivity.einleseAnzahlList.size(); i++) {
+
+                        if(MainActivity.einleseAnzahlList.get(i).vorundnachname().equals(persVorher.vorundnachname()))
+                        {
+                            posi = i;
+                            MainActivity.einleseAnzahlList.get(i).gruppenName = person.getGruppenName();
+
+                        }
+
+
+                    }
+
+
+
+                    DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Personen").child(posi+1+"");
+
+                    try {
+
+                        reference.setValue(person);
+
+
+                    } catch (Exception ex) {
+
+                    }
+
 
                     Intent intent3 = new Intent(v.getContext(), MainActivity.class);
                     startActivity(intent3);
+
+
+
                 } else {
                     Toast.makeText(v.getContext(), "Sie haben keine Berechtigung um " + MainActivity.personen.get(position).nachname + " zu löschen", Toast.LENGTH_SHORT).show();
                 }
