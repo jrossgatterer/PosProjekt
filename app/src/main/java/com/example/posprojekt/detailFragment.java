@@ -162,6 +162,8 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                         }
 
+                        Person persVorher = MainActivity.personen.get(position);
+
                         final double endpreis = MainActivity.personen.get(position).guthaben - preis;
                         txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
                         String vorNach = MainActivity.personen.get(position).vorundnachname();
@@ -176,19 +178,30 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         MainActivity.personCounter.remove(position);
                         MainActivity.personCounter.add(person);
 
-                        position = MainActivity.personen.indexOf(person);
 
-                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(null);
-                        MainActivity.myPersonenRef.getParent().child(String.valueOf(position+1)).setValue(person);
+                        for (int i = 0; i < MainActivity.einleseAnzahlList.size(); i++) {
 
+                            if(MainActivity.einleseAnzahlList.get(i).equals(persVorher))
+                            {
+                                position = i;
+                            }
 
-                        if (MainActivity.personen.get(position).guthaben <= 5) {
-                            Toast.makeText(v.getContext(), "Achtung! Es sind noch " + MainActivity.personen.get(position).guthaben + "€ verfügbar.", Toast.LENGTH_SHORT).show();
                         }
-                    } else {
-                        Toast.makeText(v.getContext(), "Achtung! Kein Guthaben", Toast.LENGTH_SHORT).show();
-                        txt2.setBackgroundColor(Color.RED);
+
+
+                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Personen").child(position+1+"");;
+
+                        try {
+
+                            reference.setValue(person);
+                            MainActivity.einleseAnzahlList.remove(person);
+                            MainActivity.einleseAnzahlList.add(person);
+
+                        } catch (Exception ex) {
+
+                        }
                     }
+
                 } else {
                     Toast.makeText(v.getContext(), "Sie haben keine Berechtigung um ein Getränk hinzuzufügen", Toast.LENGTH_SHORT).show();
                 }

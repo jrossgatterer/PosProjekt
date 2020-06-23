@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     private boolean showdetail;
     static int id = 0;
 
+    static List<Person> einleseAnzahlList = new ArrayList<>();
+
     static List<Person> personCounter = new ArrayList<>();
     static List<Getraenk> getaenkCounter = new ArrayList<>();
 
@@ -174,6 +176,19 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             }
         }
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) != PackageManager.PERMISSION_GRANTED)
+        {
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.SEND_SMS))
+            {
+
+            }
+            else
+            {
+                ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.SEND_SMS},MY_Permission);
+
+            }
+        }
         
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
@@ -182,7 +197,14 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         location = lm.getLastKnownLocation(lm.NETWORK_PROVIDER);
 
-        //onLocationChanged(location);
+        try {
+            onLocationChanged(location);
+        }
+        catch (Exception ex)
+        {
+            Toast.makeText(this,"Kein Standort gefunden",Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     @Override
@@ -568,6 +590,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                             masterFragment.adapter.notifyDataSetChanged();
                         }
                     }
+
+                        MainActivity.einleseAnzahlList.add(new Person(vorname, nachname, guthaben, email, telefonNr, gruppe));
+
                     if(zaehlerPerson==0)
                     {
                         personVorhanden=false;
