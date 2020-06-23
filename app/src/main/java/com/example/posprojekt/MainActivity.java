@@ -126,7 +126,10 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             final View view5 = getLayoutInflater().inflate(R.layout.starttext, null);
             alert5.setView(view5);
             alert5.show();
+
         }
+
+
 
 
 
@@ -395,6 +398,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         Double preis = Double.parseDouble(getrPreis);
                                         MainActivity.getraenke.add(new Getraenk(name, preis, gruppe, 0));
                                         getraenk = new Getraenk(name, preis, gruppe);
+
                                         if(MainActivity.getraenkVorhanden==true) {
                                             writeFirstGetraenke();
                                         }
