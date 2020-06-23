@@ -168,11 +168,13 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         txt2.setText(MainActivity.personen.get(position).guthaben - preis + " €");
                         String vorNach = MainActivity.personen.get(position).vorundnachname();
                         MainActivity.personen.get(position).guthaben -= preis;
-                        MainActivity.items.remove(position);
+
 
                         Person person = MainActivity.personen.get(position);
                         MainActivity.personen.remove(position);
                         MainActivity.personen.add(person);
+                        MainActivity.items.remove(position);
+                        MainActivity.items.get(position).replaceAll(persVorher.toString(), person.toString());
                         //MainActivity.items.add(person.toString());
 
                         MainActivity.personCounter.remove(position);
@@ -194,8 +196,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         try {
 
                             reference.setValue(person);
-                            MainActivity.einleseAnzahlList.remove(person);
-                            MainActivity.einleseAnzahlList.add(person);
+
 
                         } catch (Exception ex) {
 
