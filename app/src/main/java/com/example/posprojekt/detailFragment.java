@@ -149,11 +149,17 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                         double preis = getraenk.preis;
                         String name = getraenk.name;
 
+                        int anzahlGetreankeVorher = 0;
+
+                        Getraenk getraenk1 = null;
+
                         for (int i = 0; i < MainActivity.getraenke.size(); i++) {
 
                             if (MainActivity.getraenke.get(i).getName().equals(name)) {
                                 int anzVorher = MainActivity.getraenke.get(i).getAnzahl();
+                                anzahlGetreankeVorher = anzVorher;
                                 MainActivity.getraenke.get(i).setAnzahl(anzVorher += 1);
+                                getraenk1 = MainActivity.getraenke.get(i);
                             }
                         }
 
@@ -187,21 +193,29 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
                         }
 
-
-
                         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Personen").child(posi+1+"");
 
+                        int posit = 0;
+
+                        for (int i = 0; i < MainActivity.einlesenAnzahlList.size(); i++) {
+
+                            if(MainActivity.einlesenAnzahlList.get(i).getName().equals(name))
+                            {
+                                posit = i;
+                                MainActivity.einlesenAnzahlList.get(i).anzahl = anzahlGetreankeVorher;
+                            }
+
+                        }
+
+                        DatabaseReference referenceGetraenke = FirebaseDatabase.getInstance().getReference().child("Getraenke").child(posit+1+"");
+
                         try {
-
+                            referenceGetraenke.setValue(getraenk1);
                             reference.setValue(person);
-
 
                         } catch (Exception ex) {
 
                         }
-
-
-
                     }
 
                 } else {
@@ -285,6 +299,7 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                     EditText guthaben = view.findViewById(R.id.guthabenerweiternBetrag);
 
                                     try {
+                                        Person persVorher = MainActivity.personen.get(position);
                                         double guthabenerweitern = Double.parseDouble(guthaben.getText().toString());
                                         double gut = MainActivity.personen.get(position).guthaben + guthabenerweitern;
 
@@ -294,17 +309,44 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                         MainActivity.items.remove(position);
                                         MainActivity.personen.remove(position);
                                         MainActivity.personen.add(person);
-                                        //MainActivity.items.add(person.toString());
+
 
                                         MainActivity.personCounter.remove(position);
                                         MainActivity.personCounter.add(person);
 
-                                        //Firebase
-                                        MainActivity.myPersonenRef.child(String.valueOf(position+1)).setValue(person);
 
                                         position = MainActivity.personen.indexOf(person);
 
                                         txt2.setText(gut + " €");
+
+
+                                        int posi = 0;
+
+                                        for (int i = 0; i < MainActivity.einleseAnzahlList.size(); i++) {
+
+                                            if(MainActivity.einleseAnzahlList.get(i).vorundnachname().equals(persVorher.vorundnachname()))
+                                            {
+                                                posi = i;
+                                                MainActivity.einleseAnzahlList.get(i).guthaben = person.getGuthaben();
+
+                                            }
+
+
+                                        }
+
+
+
+                                        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Personen").child(posi+1+"");
+
+                                        try {
+
+                                            reference.setValue(person);
+
+
+                                        } catch (Exception ex) {
+
+                                        }
+
 
                                         Toast.makeText(v.getContext(), "Neues Guthaben: " + gut, Toast.LENGTH_SHORT).show();
                                     } catch (Exception ex) {

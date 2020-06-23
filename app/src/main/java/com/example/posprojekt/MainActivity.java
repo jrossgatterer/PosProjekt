@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static int id = 0;
 
     static List<Person> einleseAnzahlList = new ArrayList<>();
+    static List<Getraenk> einlesenAnzahlList = new ArrayList<>();
 
     static List<Person> personCounter = new ArrayList<>();
     static List<Getraenk> getaenkCounter = new ArrayList<>();
@@ -115,6 +116,19 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             }
         });
+
+
+
+        if(personen.size() == 0)
+        {
+            AlertDialog.Builder alert5 = new AlertDialog.Builder(this);
+
+            final View view5 = getLayoutInflater().inflate(R.layout.starttext, null);
+            alert5.setView(view5);
+            alert5.show();
+        }
+
+
 
         myGruppenRef = FirebaseDatabase.getInstance().getReference().child("Gruppen");
         myGruppenRef.addValueEventListener(new ValueEventListener() {
@@ -690,6 +704,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
+
                 String getraenkeName = dataSnapshot.child("name").getValue().toString();
                 double getraenkePreis = Double.parseDouble(dataSnapshot.child("preis").getValue().toString());
                 String gruppenName = dataSnapshot.child("gruppenName").getValue().toString();
@@ -703,7 +718,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                 }
 
 
-
+                einlesenAnzahlList.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl));
 
                 if(gruppenName.equals(MainActivity.gruppe)) {
 
