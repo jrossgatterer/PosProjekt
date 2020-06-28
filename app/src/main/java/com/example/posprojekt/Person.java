@@ -6,11 +6,11 @@ public class Person {
     String nachname;
     double guthaben;
     String emailAdresse;
-    long telefonNr;
+    String telefonNr;
     String gruppenName;
 
 
-    public Person(String vorname, String nachname, double guthaben, String emailAdresse, long telefonNr,String gruppenName) {
+    public Person(String vorname, String nachname, double guthaben, String emailAdresse, String telefonNr,String gruppenName) {
         this.vorname = vorname;
         this.nachname = nachname;
         this.guthaben = guthaben;
@@ -62,11 +62,11 @@ public class Person {
         this.emailAdresse = emailAdresse;
     }
 
-    public long getTelefonNr() {
+    public String getTelefonNr() {
         return telefonNr;
     }
 
-    public void setTelefonNr(long telefonNr) {
+    public void setTelefonNr(String telefonNr) {
         this.telefonNr = telefonNr;
     }
 

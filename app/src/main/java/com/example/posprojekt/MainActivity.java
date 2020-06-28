@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -37,10 +39,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener, LocationListener {
+public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener {
 
     private static final int MY_Permission = 0;
     private static final int RQ_PREFERENCES = 1;
@@ -75,12 +79,13 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static List<Gruppe> gruppen = new ArrayList<>();
 
     static String gruppenpasswort;
-  View backgroundLayout;
-  View fragbackgroundLayout;
-  static double lat;
-  static double lon;
-  static LocationManager lm;
-  Location location;
+    View backgroundLayout;
+    View fragbackgroundLayout;
+    static double lat;
+    static double lon;
+    static String locationName;
+    static LocationManager lm;
+    Location location;
 
     static DatabaseReference myPersonenRef;
     DatabaseReference myGruppenRef;
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
         String storeColor = prefs.getString(getString(R.string.key_color),"#FFFFFF");
         backgroundLayout.setBackgroundColor(Color.parseColor(storeColor));
-        
+
         myPersonenRef = FirebaseDatabase.getInstance().getReference().child("Personen");
         myPersonenRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -206,21 +211,56 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             }
         }
-        
+
         detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
 
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        location = lm.getLastKnownLocation(lm.NETWORK_PROVIDER);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, new LocationListener() {
+            @Override
+            public void onLocationChanged(Location location) {
+                MainActivity.lon = location.getLongitude();
+                MainActivity.lat = location.getLatitude();
 
+
+
+
+            }
+
+            @Override
+            public void onStatusChanged(String s, int i, Bundle bundle) {
+
+                Toast.makeText(getApplicationContext(),"Standort wurde verändert",Toast.LENGTH_SHORT).show();
+
+            }
+
+            @Override
+            public void onProviderEnabled(String s) {
+
+            }
+
+            @Override
+            public void onProviderDisabled(String s) {
+
+            }
+        });
+
+
+        Geocoder geo = new Geocoder(getApplicationContext(), Locale.getDefault());
         try {
-            onLocationChanged(location);
+            List<Address> addresses = geo.getFromLocation(lat,lon,1);
+            if (addresses.isEmpty()) {
+                Toast.makeText(this,"Auf Standort warten",Toast.LENGTH_SHORT).show();
+            }
+            else {
+                MainActivity.locationName = addresses.get(0).getLocality();
+                MainActivity.locationName +=  "  "+addresses.get(0).getCountryCode();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        catch (Exception ex)
-        {
-            Toast.makeText(this,"Kein Standort gefunden",Toast.LENGTH_SHORT).show();
-        }
+
 
     }
 
@@ -288,7 +328,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         String nach = nachname.getText().toString();
                                         double guthab = Double.parseDouble(guthanen.getText().toString());
                                         String emai = email.getText().toString();
-                                        long teln = Long.parseLong(telnr.getText().toString());
+                                        String teln =  telnr.getText().toString();
                                         Person x = new Person(vorn, nach, guthab, emai, teln, gruppe);
                                         items.add(x.toString());
                                         personen.add(x);
@@ -586,7 +626,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                     Double guthaben = Double.parseDouble(dataSnapshot.child("guthaben").getValue().toString());
                     String vorname = dataSnapshot.child("vorname").getValue().toString();
                     String nachname = dataSnapshot.child("nachname").getValue().toString();
-                    long telefonNr = Long.parseLong(dataSnapshot.child("telefonNr").getValue().toString());
+                    String telefonNr = dataSnapshot.child("telefonNr").getValue().toString();
                     String gruppe = dataSnapshot.child("gruppenName").getValue().toString();
 
 
@@ -703,50 +743,50 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         for (int i = 1; i <= zaehlerGetraenke; i++) {
 
 
-        myGetraenkeRef = FirebaseDatabase.getInstance().getReference().child("Getraenke").child(String.valueOf(i));
-        myGetraenkeRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            myGetraenkeRef = FirebaseDatabase.getInstance().getReference().child("Getraenke").child(String.valueOf(i));
+            myGetraenkeRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
 
-                String getraenkeName = dataSnapshot.child("name").getValue().toString();
-                double getraenkePreis = Double.parseDouble(dataSnapshot.child("preis").getValue().toString());
-                String gruppenName = dataSnapshot.child("gruppenName").getValue().toString();
-                int anzahl = 0;
-                try {
-                    anzahl = Integer.parseInt(dataSnapshot.child("anzahl").getValue().toString());
-                }
-                catch (Exception ex)
-                {
+                    String getraenkeName = dataSnapshot.child("name").getValue().toString();
+                    double getraenkePreis = Double.parseDouble(dataSnapshot.child("preis").getValue().toString());
+                    String gruppenName = dataSnapshot.child("gruppenName").getValue().toString();
+                    int anzahl = 0;
+                    try {
+                        anzahl = Integer.parseInt(dataSnapshot.child("anzahl").getValue().toString());
+                    }
+                    catch (Exception ex)
+                    {
 
-                }
-
-
-                einlesenAnzahlList.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl));
-
-                if(gruppenName.equals(MainActivity.gruppe)) {
+                    }
 
 
-                    if (MainActivity.getraenke.contains(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl))) {
+                    einlesenAnzahlList.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl));
 
-                    } else {
-                        MainActivity.getraenke.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl));
+                    if(gruppenName.equals(MainActivity.gruppe)) {
 
-                        MainActivity.getaenkCounter.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName, anzahl));
+
+                        if (MainActivity.getraenke.contains(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl))) {
+
+                        } else {
+                            MainActivity.getraenke.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName,anzahl));
+
+                            MainActivity.getaenkCounter.add(new Getraenk(getraenkeName, getraenkePreis, gruppenName, anzahl));
+                        }
+                    }
+                    else
+                    {
+                        Log.d("MainActivity","Andere Gruppe");
                     }
                 }
-                else
-                {
-                    Log.d("MainActivity","Andere Gruppe");
+
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
                 }
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+            });
         }
         if(zaehlerGetraenke==0)
         {
@@ -758,24 +798,4 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
         }
     }
 
-    @Override
-    public void onLocationChanged(Location location) {
-        lat = location.getLatitude();
-        lon = location.getLongitude();
-    }
-
-    @Override
-    public void onStatusChanged(String provider, int status, Bundle extras) {
-
-    }
-
-    @Override
-    public void onProviderEnabled(String provider) {
-
-    }
-
-    @Override
-    public void onProviderDisabled(String provider) {
-
-    }
 }

@@ -75,8 +75,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
 
     DatabaseReference myPersonenRef;
 
-    protected LocationManager locationManager;
-    Location location;
 
 
     @Override
@@ -381,21 +379,19 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
                                 }
                                 SmsManager sms = SmsManager.getDefault();
 
-                                Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
-                                try {
-                                    List<Address> list = geocoder.getFromLocation(MainActivity.lat, MainActivity.lon, 1);
-                                    Toast.makeText(getContext(), list.get(0).getLocality(), Toast.LENGTH_SHORT).show();
-                                    smstext += "\n" + list.get(0).getLocality();
+                                smstext += "\n \n"
+                                        +"Latitude: "+MainActivity.lat
+                                        +"\n Longitude: "+MainActivity.lon;
 
-                                } catch (IOException e) {
-                                    Toast.makeText(getContext(), "Fehler beim finden des Standorts", Toast.LENGTH_SHORT).show();
-                                }
 
-                                long telnr = MainActivity.personen.get(position).telefonNr;
+
+
+                                String telnr = MainActivity.personen.get(position).telefonNr;
                                 try {
                                     sms.sendTextMessage(String.valueOf(telnr), null, smstext, null, null);
                                     Toast.makeText(getContext(), "SMS mit Standort wurde gesendet", Toast.LENGTH_SHORT).show();
+
                                 } catch (Exception ex) {
                                     Toast.makeText(getContext(), "Fehler beim Senden der SMS", Toast.LENGTH_SHORT).show();
                                 }
