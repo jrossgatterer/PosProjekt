@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 
-public class masterFragment extends Fragment {
+public class MasterFragment extends Fragment {
 
     static ArrayList<Person> personen = new ArrayList<>();
     static ArrayList<String> items = new ArrayList<>();

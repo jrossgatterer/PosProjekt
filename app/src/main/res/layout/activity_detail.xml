@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <LinearLayout android:orientation="vertical"
-    tools:context=".activity_detail"
+    tools:context=".Activity_detail"
     android:layout_height="match_parent"
     android:layout_width="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <fragment android:layout_height="match_parent" android:layout_width="match_parent" android:name="com.example.posprojekt.detailFragment" android:id="@+id/fragright"/>
+    <fragment android:layout_height="match_parent" android:layout_width="match_parent" android:name="com.example.posprojekt.DetailFragment" android:id="@+id/fragright"/>
 
 </LinearLayout>

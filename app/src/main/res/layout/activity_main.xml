@@ -11,7 +11,7 @@
 
     <fragment
         android:id="@+id/fragmentmaster"
-        android:name="com.example.posprojekt.masterFragment"
+        android:name="com.example.posprojekt.MasterFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="3" />

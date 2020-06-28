@@ -7,14 +7,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.location.Address;
-import android.location.Criteria;
-import android.location.Geocoder;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
+
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
@@ -37,25 +30,16 @@ import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.IOException;
-import java.security.Provider;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import static android.content.Context.LOCATION_SERVICE;
-import static android.content.Context.NETWORK_STATS_SERVICE;
-import static androidx.core.content.ContextCompat.getSystemService;
 
 
-public class detailFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+
+
+
+public class DetailFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private TextView txt1; //Name
     private TextView txt2; //Guthaben
@@ -74,8 +58,6 @@ public class detailFragment extends Fragment implements View.OnClickListener, Ad
     Getraenk getraenk;
 
     DatabaseReference myPersonenRef;
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

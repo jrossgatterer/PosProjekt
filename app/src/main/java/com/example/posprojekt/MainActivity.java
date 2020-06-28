@@ -21,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Switch;
 import android.widget.Toast;
@@ -60,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     static long zaehlerPerson;
     long zaehlerGruppe;
     long zaehlerGetraenke;
-    private detailFragment detailFragment;
+    private DetailFragment detailFragment;
     private boolean showdetail;
     static int id = 0;
 
@@ -212,7 +211,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
             }
         }
 
-        detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
+        detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         showdetail = detailFragment != null && detailFragment.isInLayout();
 
         lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -287,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     }
 
     private void callDetailActivity(int pos, String item) {
-        Intent intent = new Intent(this, activity_detail.class);
+        Intent intent = new Intent(this, Activity_detail.class);
         intent.putExtra("pos",pos);
         intent.putExtra("item",item);
         Log.d("MainActicity",item);
@@ -334,9 +333,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
                                         personen.add(x);
 
                                         MainActivity.person = x;
-                                        masterFragment.adapter.notifyDataSetChanged();
-                                        masterFragment.listView.setAdapter(masterFragment.adapter);
-                                        masterFragment.adapter.notifyDataSetChanged();
+                                        MasterFragment.adapter.notifyDataSetChanged();
+                                        MasterFragment.listView.setAdapter(MasterFragment.adapter);
+                                        MasterFragment.adapter.notifyDataSetChanged();
 
                                         if(MainActivity.personVorhanden==true)
                                         {
@@ -652,9 +651,9 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
                             MainActivity.personCounter.add(new Person(vorname, nachname, guthaben, email,telefonNr,gruppe));
 
-                            masterFragment.adapter.notifyDataSetChanged();
-                            masterFragment.listView.setAdapter(masterFragment.adapter);
-                            masterFragment.adapter.notifyDataSetChanged();
+                            MasterFragment.adapter.notifyDataSetChanged();
+                            MasterFragment.listView.setAdapter(MasterFragment.adapter);
+                            MasterFragment.adapter.notifyDataSetChanged();
                         }
                     }
 

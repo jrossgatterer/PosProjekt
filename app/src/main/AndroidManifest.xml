@@ -17,7 +17,7 @@
         android:theme="@style/AppTheme">
 
 
-        <activity android:name=".activity_detail"/>
+        <activity android:name=".Activity_detail"/>
         <activity android:name=".MySettingsActivity"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>

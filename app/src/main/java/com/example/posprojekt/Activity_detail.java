@@ -8,7 +8,7 @@ import android.os.Bundle;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
-public class activity_detail extends AppCompatActivity {
+public class Activity_detail extends AppCompatActivity {
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -28,7 +28,7 @@ public class activity_detail extends AppCompatActivity {
     private void handleIntent() {
         Intent intent = getIntent();
         if(intent == null) return;
-        detailFragment detailFragment = (detailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
+        DetailFragment detailFragment = (DetailFragment) getSupportFragmentManager().findFragmentById(R.id.fragright);
         int pos = intent.getIntExtra("pos", -1);
         String item = intent.getStringExtra("item");
         detailFragment.showInformation(pos,item);
