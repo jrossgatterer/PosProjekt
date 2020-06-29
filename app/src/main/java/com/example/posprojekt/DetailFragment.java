@@ -394,4 +394,18 @@ public class DetailFragment extends Fragment implements View.OnClickListener, Ad
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
     }
+
+
+
+
+
+
+
+
+
 }
+
+
+
+
+
