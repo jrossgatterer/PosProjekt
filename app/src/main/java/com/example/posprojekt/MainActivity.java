@@ -1,7 +1,12 @@
 package com.example.posprojekt;
 
 import android.Manifest;
+import android.app.AlarmManager;
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -29,6 +34,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
@@ -40,8 +47,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+
 
 public class MainActivity extends AppCompatActivity implements OnSelectionChangedListener, View.OnClickListener {
 
@@ -93,10 +102,19 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     private SharedPreferences prefs;
     private SharedPreferences.OnSharedPreferenceChangeListener preferenceChangeListener;
 
+    public static final String CHANNEL_1_ID = "channel1";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        //Notifications
+        Calendar calendar = Calendar.getInstance();
+        Intent intent = new Intent(MainActivity.this, ReminderBroadcast.class);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(MainActivity.this,0,intent,0);
+        AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        alarmManager.setRepeating(AlarmManager.RTC,calendar.getTimeInMillis(),10000,pendingIntent); // Wenn die App läuft wird alle 5 Minuten eine Aufforderung als Notification zum Trinken gesendet
 
         prefs = PreferenceManager.getDefaultSharedPreferences(this);
         prefs.registerOnSharedPreferenceChangeListener(preferenceChangeListener);
@@ -120,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
             }
         });
-
 
 
         if(personen.size() == 0)
