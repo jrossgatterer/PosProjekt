@@ -39,6 +39,6 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:fontFamily="sans-serif-black"
-        android:hint="Telefonnummer"
-        android:inputType="number" />
+        android:hint="Telefonnummer (+43...)"
+        android:inputType="number|text" />
 </LinearLayout>

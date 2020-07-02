@@ -628,7 +628,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     }
     public void writeFirstPersonen()
     {
-        myPersonenRef.getParent().child(String.valueOf(zaehlerPerson+1)).setValue(person);
+        myPersonenRef.getRoot().child("Personen").child(String.valueOf(zaehlerPerson+1)).setValue(person);
     }
 
     public void loadPersonen()
@@ -703,7 +703,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
 
     public void writeFirstGruppen()
     {
-        myGruppenRef.getParent().child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
+        myGruppenRef.getRoot().child("Gruppen").child(String.valueOf(zaehlerGruppe+1)).setValue(neueGruppe);
     }
 
     public void loadGruppen()
@@ -752,7 +752,7 @@ public class MainActivity extends AppCompatActivity implements OnSelectionChange
     }
     public void writeFirstGetraenke()
     {
-        myGetraenkeRef.getParent().child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
+        myGetraenkeRef.getRoot().child("Getraenke").child(String.valueOf(zaehlerGetraenke+1)).setValue(getraenk);
     }
 
     public void loadGetaenke()
